@@ -1,3 +1,37 @@
-body{
-  color: white
+/* header{
+  background-image: url(/pic/police.png);
+} */
+
+.header-body{
+  background-image: url(/pic/police.png);
+  display: block;
+  position: relative;
+  color: white;
+  background-size: cover;
+  padding: 0
+}
+.h1 {
+  font-family: 'Ubuntu';
+  font-size: 100px;
+  height: 400px;
+  /* border: 3px solid green; */
+  padding-top: 250px;
+}
+.footer {
+  /* background-color: #f1f1f1; */
+  /* padding: 10px; */
+  text-align: center;
+  height: 100px;
+}
+button{
+  color: white;
+  border: none;
+  background: none;
+  font-size: 20px;
+
+  margin:20px
+}
+button:hover{
+  color: orange;
+  transform: scale(1.5);
 }
