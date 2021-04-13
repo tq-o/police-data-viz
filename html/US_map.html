@@ -14,27 +14,54 @@
 
 <body>
 	<script type="text/javascript">
-		var proj_county = d3.geoAlbers().scale([1000]);
-		var path_county = d3.geoPath().projection(proj_county);
+		var proj_state = d3.geoAlbers().scale([1000]);
+		var path_state = d3.geoPath().projection(proj_state);
 		
 		var svg = d3.select("body")
 					.append("svg")
-					.attr("width", 950)
+					.attr("width", 1000)
 					.attr("height", 500);
 					
+		<!-- TODO: don't forget to include alaska and hawaii who are currently cut off -->
 		d3.json("https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/us.json")
 			.then(function(json) {
-				svg.selectAll("path")
-					.data(topojson.feature(json, json.objects.states).features)
-					.enter()
-					.append("path")
-					.attr("d", path_county)
-					.style("stroke", "#ffffff")
-					.style("stroke-width", "1")
-					.style("fill", "#ababab");
+				d3.csv("../data/killingsbystate.csv")
+					.then(function(csv) {
+						var totals = Array.from(csv, x => parseInt(x["# People Killed"]));
+						var stateScale = d3.scalePow()
+											 .exponent(0.33)
+											 .domain([0, d3.max(totals, function(d) { return d; })])
+											 .range(["#d6edff", "#0a4a7d"]);
+						//console.log(totals);
+						var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
+						//console.log(topojson.feature(json, json.objects.states));
+						var features = topojson.feature(json, json.objects.states).features;
+						features.sort((a, b) => (parseInt(a["id"]) < parseInt(b["id"])) ? -1 : 1);
+						//console.log(features);
+						svg.selectAll("path")
+							.data(features)
+							.enter()
+							.append("path")
+							.attr("d", path_state)
+							.attr("x", 1000)
+							.style("stroke", "#ffffff")
+							.style("stroke-width", "1")
+							.data(totals)
+							.style("fill", function(d) {
+								return stateScale(d);
+							})
+							.on("mouseover", function(event, d) {
+								d3.select(event.currentTarget).style("fill", "#222222");				
+							})
+							.on("mouseout", function(event, d) {
+								d3.select(event.currentTarget).style("fill", function(d) {
+									return stateScale(d);
+								})
+							});
+					});
 			});
+		var states = svg.selectAll("path");
 	</script>
-	<!-- D3 GEO FOR THE MAP -->
 </body>
 
 </html>
