@@ -7,7 +7,7 @@
 	<link rel="shortcut icon" href="#">
 	<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
 	<script type="text/javascript" src="https://d3js.org/topojson.v3.min.js"></script>
-	<link rel="stylesheet" href="../index.css" />
+	<link rel="stylesheet" href="../css/US_map.css" />
 	<style type="text/css">
 	</style>
 </head>
@@ -16,6 +16,11 @@
 	<script type="text/javascript">
 		var proj_state = d3.geoAlbers().scale([1000]);
 		var path_state = d3.geoPath().projection(proj_state);
+
+		var spider_div = d3.select("body")
+							.append("div")
+							.attr("class", "tooltip")
+							.style("opacity", 0);
 		
 		var svg = d3.select("body")
 					.append("svg")
@@ -51,12 +56,20 @@
 								return stateScale(d);
 							})
 							.on("mouseover", function(event, d) {
-								d3.select(event.currentTarget).style("fill", "#222222");				
+								//var mouse_pos = d3.pointer(event, svg);
+								d3.select(event.currentTarget).style("fill", "#222222");
+								spider_div.style("opacity", 1);
+								//spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+							})
+							.on("mousemove", function(event, d) {
+								var mouse_pos = d3.pointer(event, svg);
+								spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
 							})
 							.on("mouseout", function(event, d) {
 								d3.select(event.currentTarget).style("fill", function(d) {
 									return stateScale(d);
 								})
+								//spider_div.style("opacity", 0);
 							});
 					});
 			});
