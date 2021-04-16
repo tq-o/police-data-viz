@@ -7,6 +7,8 @@
 	<link rel="shortcut icon" href="#">
 	<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
 	<script type="text/javascript" src="https://d3js.org/topojson.v3.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
 	<link rel="stylesheet" href="../css/US_map.css" />
 	<style type="text/css">
 	</style>
@@ -14,63 +16,129 @@
 
 <body>
 	<script type="text/javascript">
-		var proj_state = d3.geoAlbers().scale([1000]);
-		var path_state = d3.geoPath().projection(proj_state);
+		var proj_state = d3.geoAlbers().scale([750]);
+		//var path_state = d3.geoPath().projection(proj_state);
 
 		var spider_div = d3.select("body")
 							.append("div")
 							.attr("class", "tooltip")
-							.style("opacity", 0);
+							.style("opacity", 1);
+							
+		spider_div.append("h1");
+		
+		var bar_svg = spider_div.append("svg")
+						.attr("width", 300)
+						.attr("height", 20);
 		
 		var svg = d3.select("body")
 					.append("svg")
 					.attr("width", 1000)
 					.attr("height", 500);
 					
-		<!-- TODO: don't forget to include alaska and hawaii who are currently cut off -->
-		d3.json("https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/us.json")
+		d3.json("https://d3js.org/us-10m.v1.json")
 			.then(function(json) {
 				d3.csv("../data/killingsbystate.csv")
 					.then(function(csv) {
-						var totals = Array.from(csv, x => parseInt(x["# People Killed"]));
+						var totals = Array.from(csv, x => ({ total: parseInt(x["# People Killed"]),
+															name: x["State"],
+															black: parseInt(x["# Black people killed"])/parseFloat(x["# People Killed"]),
+															hispanic: parseInt(x["# Hispanic people killed"])/parseFloat(x["# People Killed"]),
+															native: parseInt(x["# Native American people killed"])/parseFloat(x["# People Killed"]),
+															asian: parseInt(x["# Asian people killed"])/parseFloat(x["# People Killed"]),
+															pacific: parseInt(x["# Pacific Islanders killed"])/parseFloat(x["# People Killed"]),
+															white: parseInt(x["# White people killed"])/parseFloat(x["# People Killed"]),
+															unknown: parseInt(x["# Unknown Race people killed"])/parseFloat(x["# People Killed"])
+															}));
 						var stateScale = d3.scalePow()
-											 .exponent(0.33)
-											 .domain([0, d3.max(totals, function(d) { return d; })])
-											 .range(["#d6edff", "#0a4a7d"]);
-						//console.log(totals);
-						var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
-						//console.log(topojson.feature(json, json.objects.states));
+											 .exponent(0.4)
+											 .domain([0, d3.max(totals, function(d) { return d.total; })])
+											 .range(["#ffffff", "#0a4a7d"]);
+						var stack = d3.stack()
+										.keys(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
+										.order(d3.stackOrderDescending);
+						var stacked_totals = stack(totals);
+						
+						var barXScale = d3.scaleLinear()
+											.domain([0, 1])
+											.range([0, 300])
+											
+						var colors = d3.scaleOrdinal()
+										.domain(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
+										.range(["#006ba4", "#595959", "#ffbc79", "#5f9ed1", "#a2c8ec", "#ff800e", "#ababab"]);
+										
+						//var stackColumn = (stacked, n) => stacked.map(x => [[x[n][0], x[n][1]]]);
+						//console.log(stackColumn(stacked_totals, 0));
+						var bar_group = bar_svg.selectAll("g")
+										.data(stack([totals[9]]))
+										.enter()
+										.append("g")
+										.style("fill", function(d, i) {
+											return colors(i);
+										});
+						var bar_stack = bar_group.selectAll("rect")
+											.data(function(d) { return d; })
+											.enter()
+											.append("rect")
+											.attr("x", function(d) {
+												return Math.ceil(barXScale(d[0]));
+											})
+											.attr("y", 0)
+											.attr("height", 20)
+											.attr("width", function(d) {
+												return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
+											});
+													
+										
+						//var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
 						var features = topojson.feature(json, json.objects.states).features;
 						features.sort((a, b) => (parseInt(a["id"]) < parseInt(b["id"])) ? -1 : 1);
-						//console.log(features);
-						svg.selectAll("path")
-							.data(features)
-							.enter()
-							.append("path")
-							.attr("d", path_state)
-							.attr("x", 1000)
-							.style("stroke", "#ffffff")
-							.style("stroke-width", "1")
-							.data(totals)
-							.style("fill", function(d) {
-								return stateScale(d);
-							})
-							.on("mouseover", function(event, d) {
-								//var mouse_pos = d3.pointer(event, svg);
-								d3.select(event.currentTarget).style("fill", "#222222");
-								spider_div.style("opacity", 1);
-								//spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-							})
-							.on("mousemove", function(event, d) {
-								var mouse_pos = d3.pointer(event, svg);
-								spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-							})
-							.on("mouseout", function(event, d) {
-								d3.select(event.currentTarget).style("fill", function(d) {
-									return stateScale(d);
+						//d3.tsv("https://gist.githubusercontent.com/mbostock/4090846/raw/07e73f3c2d21558489604a0bc434b3a5cf41a867/us-state-names.tsv")
+							//.then(function(tsv){
+							svg.selectAll("path")
+								.data(features)
+								.enter()
+								.append("path")
+								.attr("d", d3.geoPath(d3.geoTransform({
+									point: function(x, y) {
+										this.stream.point(x * 0.75 + (svg.attr("width")*0.125), y * 0.75);
+									}
+								})))
+								.style("stroke", "#ffffff")
+								.style("stroke-width", "1")
+								.data(totals)
+								.style("fill", function(d) {
+									return stateScale(d.total);
 								})
-								//spider_div.style("opacity", 0);
-							});
+								.on("mouseover", function(event, d) {
+									d3.select(event.currentTarget).style("fill", "#222222");
+									spider_div.style("opacity", 1);
+								})
+								.on("mousemove", function(event, d) {
+									var mouse_pos = d3.pointer(event, svg);
+									spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+									spider_div.selectAll("h1").text(d.name.toUpperCase());
+									var state_bar = stack([d]);
+									bar_group.data(state_bar).enter();
+									bar_group.selectAll("rect")
+											.data(function(d) { return d; })
+											.transition()
+											.duration(1)
+											.attr("x", function(d) {
+												return Math.ceil(barXScale(d[0]));
+											})
+											.attr("width", function(d) {
+												return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
+											});
+								})
+								.on("mouseout", function(event, d) {
+									d3.select(event.currentTarget).style("fill", function(d) {
+										return stateScale(d.total);
+									})
+								})
+								.on("mouseleave", function(event, d) {
+									spider_div.style("opacity", 1);
+								});
+						//});
 					});
 			});
 		var states = svg.selectAll("path");
