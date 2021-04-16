@@ -22,7 +22,7 @@
 		var spider_div = d3.select("body")
 							.append("div")
 							.attr("class", "tooltip")
-							.style("opacity", 1);
+							.style("opacity", 0);
 							
 		spider_div.append("h1");
 		
@@ -136,7 +136,7 @@
 									})
 								})
 								.on("mouseleave", function(event, d) {
-									spider_div.style("opacity", 1);
+									spider_div.style("opacity", 0);
 								});
 						//});
 					});
