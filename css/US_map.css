@@ -29,3 +29,22 @@ h1 {
   height: 400px;
   pointer-events: none;
 }
+
+.spider-label {
+  position: absolute;
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  color: black;
+  font-size: 11px;
+  text-align: center;
+}
+
+#right-vert {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+}
+
+#left-vert {
+	writing-mode: vertical-lr;
+	text-orientation: mixed;
+}
