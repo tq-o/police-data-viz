@@ -15,6 +15,12 @@ h1 {
 	margin-top: 0.4em;
 }
 
+h2 {
+	font-size: 11px;
+	margin-top: 0em;
+	font-weight: normal;
+}
+
 .tooltip {
   position: absolute;
   font-family: 'Roboto', sans-serif;
@@ -26,7 +32,7 @@ h1 {
   border-color: black;
   border-width: 2px;
   width: 300px;
-  height: 400px;
+  height: 450px;
   pointer-events: none;
 }
 
@@ -34,8 +40,26 @@ h1 {
   position: absolute;
   font-family: 'Roboto', sans-serif;
   font-weight: normal;
-  color: black;
+  fill: black;
   font-size: 11px;
+  text-align: center;
+}
+
+.state-legend {
+  position: absolute;
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  fill: white;
+  font-size: 11px;
+  text-align: center;
+}
+
+.loading {
+  position: absolute;
+  font-family: 'Robot', sans-serif;
+  font-weight: bold;
+  fill: white;
+  font-size: 48px;
   text-align: center;
 }
 

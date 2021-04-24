@@ -25,6 +25,7 @@
 							.style("opacity", 0);
 							
 		spider_div.append("h1");
+		spider_div.append("h2").text("Breakdown of Police Killings by Race");
 		var spider_padding = 25;
 		var spider_graph_size = 300;
 		
@@ -45,7 +46,8 @@
 			.then(function(json) {
 				d3.csv("../data/killingsbystate.csv")
 					.then(function(csv) {
-						var totals = Array.from(csv, x => ({ total: parseInt(x["# People Killed"]),
+						var totals = Array.from(csv, x => ({ total: parseFloat(x["# People Killed"])/parseInt(x["Total Population"].replace(/,/g, "")),
+															pop: parseInt(x["Total Population"].replace(/,/g, "")),
 															name: x["State"],
 															abbr: x["State Abbreviation"],
 															black: parseInt(x["# Black people killed"])/parseFloat(x["# People Killed"]),
@@ -56,10 +58,17 @@
 															white: parseInt(x["# White people killed"])/parseFloat(x["# People Killed"]),
 															unknown: parseInt(x["# Unknown Race people killed"])/parseFloat(x["# People Killed"])
 															}));
-						var stateScale = d3.scalePow()
-											 .exponent(0.4)
+						var stateScale = d3.scaleLinear()
+											 //.exponent(0.4)
 											 .domain([0, d3.max(totals, function(d) { return d.total; })])
 											 .range(["#ffffff", "#0a4a7d"]);
+						var stateScale_numerical = d3.scaleLinear()
+											 //.exponent(0.4)
+											 .domain(stateScale.domain())
+											 .range([0, 300]);
+						console.log(d3.max(totals, function(d) { return d.total; }));
+						console.log(totals[31]);
+									
 						var stack = d3.stack()
 										.keys(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
 										.order(d3.stackOrderDescending);
@@ -94,7 +103,12 @@
 											.attr("width", function(d) {
 												return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
 											});
-													
+						
+						var loading_txt = svg.append("text")
+											.attr("x", 350)
+											.attr("y", 250)
+											.attr("class", "loading")
+											.text("LOADING...");
 										
 						//var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
 						var features = topojson.feature(json, json.objects.states).features;
@@ -133,9 +147,7 @@
 									//						  unknown: state_race_bd[6]}));
 									states_spider_data.push(({ state_ab: state_abbr[state], race_data: state_race_bd }));
 								}
-								
-								console.log(states_spider_data);
-								
+																
 								var reverse_spider_scale = d3.scaleLinear()
 													.domain([0, 1])
 													.range([0, -(150-spider_padding)]);
@@ -174,6 +186,7 @@
 								var x_right_ax = spider_svg.append("line")
 														.style("stroke", "black")
 														.style("stroke-width", 1)
+														.style("shape-rendering", "crispEdges")
 														.attr("x1", 150)
 														.attr("y1", 150)
 														.attr("x2", 300-spider_padding)
@@ -181,6 +194,7 @@
 								var x_left_ax = spider_svg.append("line")
 														.style("stroke", "black")
 														.style("stroke-width", 1)
+														.style("shape-rendering", "crispEdges")
 														.attr("x1", 150)
 														.attr("y1", 150)
 														.attr("x2", spider_padding)
@@ -188,6 +202,7 @@
 								var y_bottom_ax = spider_svg.append("line")
 														.style("stroke", "black")
 														.style("stroke-width", 1)
+														.style("shape-rendering", "crispEdges")
 														.attr("x1", 150)
 														.attr("y1", 150)
 														.attr("x2", 150)
@@ -271,7 +286,26 @@
 															else if (i == 0) { return 150+reverse_spider_scale(d); }
 															else if (i == 1) { return 150+spider_scale(d); }
 														});
-								
+								var spider_legend = spider_div.append("svg")
+															.attr("width", 300)
+															.attr("height", 70);
+								for (race in races) {
+									spider_legend.append("rect")
+												.attr("width", 12)
+												.attr("height", 12)
+												.attr("x", 20+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
+												.attr("y", 0+(parseInt(race/3)*20))
+												.style("stroke", "black")
+												.style("stroke-width", "1")
+												.style("shape-rendering", "crispEdges")
+												.attr("fill", colors(races[race]));
+									spider_legend.append("text")
+												.attr("x", 40+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
+												.attr("y", 10+(parseInt(race/3)*20))
+												.attr("fill", "black")
+												.attr("class", "spider-label")
+												.text(races[race]);
+								}
 							
 								svg.selectAll("path")
 									.data(features)
@@ -282,15 +316,16 @@
 											this.stream.point(x * 0.75 + (svg.attr("width")*0.125), y * 0.75);
 										}
 									})))
-									.style("stroke", "#ffffff")
+									.style("stroke", "#002760")
 									.style("stroke-width", "1")
 									.data(totals)
 									.style("fill", function(d) {
 										return stateScale(d.total);
 									})
 									.on("mouseover", function(event, d) {
-										d3.select(event.currentTarget).style("fill", "#222222");
+										d3.select(event.currentTarget).style("fill", "#222222").style("stroke", "white").style("stroke-width", 2);
 										spider_div.style("opacity", 1);
+										this.parentNode.appendChild(this);
 									})
 									.on("mousemove", function(event, d) {
 										var mouse_pos = d3.pointer(event, svg);
@@ -350,12 +385,57 @@
 									.on("mouseout", function(event, d) {
 										d3.select(event.currentTarget).style("fill", function(d) {
 											return stateScale(d.total);
-										})
+										}).style("stroke", "#002760").style("stroke-width", 1);
 									})
 									.on("mouseleave", function(event, d) {
 										spider_div.style("opacity", 0);
 									});
-						});
+									
+								var grad = svg.append("defs")
+											  .append("linearGradient")
+											  .attr("id", "grad")
+											  .selectAll("stop")
+											  .data(stateScale.ticks().map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: stateScale(t) })))
+											  .enter()
+											  .append("stop")
+											  .attr("offset", function(d) {
+													return d.offset;
+											  })
+											  .attr("stop-color", function(d) {
+													return d.color;
+											  });
+									  
+								var legend_txt = svg.append("text")
+														.attr("x", 15)
+														.attr("y", 75)
+														.attr("class", "state-legend")
+														.attr("dx", "1em")
+														.text("Police Killings")
+								var legend_txt_2 = svg.append("text")
+														.attr("x", 15)
+														.attr("y", 75)
+														.attr("class", "state-legend")
+														.attr("dy", "1.2em")
+														.text("as % of Population");
+									  
+								var state_legend = svg.append("g")
+													.attr("transform", "translate(70, 100), rotate(90)")
+													.append("rect")
+													.attr("width", 300)
+													.attr("height", 20)
+													.style("fill", "url(#grad)");
+								var percent_acc = d3.format(".3%");
+								var legend_axis = d3.axisLeft(stateScale_numerical).tickValues([0, 0.00001, 0.00002, 0.00003, 0.00004, 0.00005, 0.00006, 0.00007]).tickFormat(percent_acc);
+								var state_legend_axis = svg.append("g").call(legend_axis);
+								state_legend_axis.selectAll(".tick text")
+											.attr("transform", "translate(50, 100)")
+											.attr("color", "white");
+								state_legend_axis.selectAll(".tick line")
+											.attr("transform", "translate(70, 100)")
+											.attr("x2", -26);
+								state_legend_axis.selectAll(".domain")
+											.attr("transform", "translate(70, 100)");
+								});
 					});
 			});
 		var states = svg.selectAll("path");
