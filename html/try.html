@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+ 
+    <script src=
+        "https://d3js.org/d3.v5.min.js">
+    </script>
+</head>
+ 
+<body>
+ 
+    <h1 style="text-align: center; color: green;">
+        GeeksforGeeks
+    </h1>
+ 
+    <h3 style="text-align: center;">
+        D3.js | link.vertical() Method
+    </h3>
+<!--  
+    <center>
+    <svg id="gfg" width="200" height="200"></svg>
+    </center>
+  -->
+    <script>
+        var data = [
+            {source: [100,25], target: [175,175]},
+            {source: [100,25], target: [25,175]}];
+       
+        // Vertical link generator
+        var link = d3.linkVertical()
+                .source(function(d) {
+                    return [d.source[1], d.source[0]];
+                })
+                .target(function(d) {
+                    return [d.target[1], d.target[0]];
+                });
+       
+        // Adding the link paths
+        d3.select("#body")
+            .selectAll("path")
+            .data(data)
+            .join("path")
+            .attr("d", link)
+            .classed("link", true);  
+    </script>
+</body>
+ 
+</html>

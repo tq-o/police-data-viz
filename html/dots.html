@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>COMPSCI 571 - Final</title>
+	<script type="text/javascript" src="https://d3js.org/d3.v6.min.js">
+	</script>
+	<link rel="stylesheet" href="../css/Header.css" />
+	<!-- CSS only -->
+	<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous"> -->
+	<style type="text/css">
+	</style>
+</head>
+
+<body>
+	<script type="text/javascript">
+
+		//Width and height
+		var w = 2000;
+		var h = 1300;
+		var padding = 300;
+		//Original data
+	
+		var res = [];
+		var res_enc = [];
+		var res_cause = [];
+		var dataset = {
+			nodes : [],
+			nodes2 : [],
+			nodes3 : [],
+			edges: []
+		}
+		d3.csv("/data/policekillings.csv")
+		.then(function(data) {
+			console.log(data.length);
+			for (var i = 0; i < data.length; i++) {
+			
+				var enc = data[i]["Encounter Type (DRAFT)"]
+				if (enc.toLowerCase().includes("domestic") === true) {
+					enc = "Domestic Violence"
+				}
+				else if (enc.toLowerCase().includes("health") === true || enc.toLowerCase().includes("mental") === true){
+					enc = "Health Crisis/Mental Health"
+				}
+				else if (enc==="" || enc==="#VALUE!" || enc.toLowerCase().includes("no crime") === true || enc.toLowerCase().includes("none") === true || enc.toLowerCase().includes("unknown") === true || enc.toLowerCase().includes("unavailable") === true){
+					enc = "None/Unknown"
+				}
+				else if (enc.toLowerCase().includes("other") === true || enc.toLowerCase().includes("substance abuse") === true || enc.toLowerCase().includes("suspicious person") === true || enc.toLowerCase().includes("profiling") === true){
+					enc = "Other"
+				}
+				else if (enc.toLowerCase().includes("violent") === true){
+					enc = "Part 1 Violent Crime"
+				}
+				else if (enc.toLowerCase().includes("person with") === true || enc.toLowerCase().includes("weapon") === true || enc.toLowerCase().includes("stabbing") === true){
+					enc = "Weapon"
+				}
+				else if (enc.toLowerCase().includes("traffic") === true){
+					enc = "Traffic"
+				}
+				else if (enc.toLowerCase().includes("property") === true){
+					enc = "Property"
+				}
+				else if (enc.toLowerCase().includes("public order") === true){
+					enc = "Public Order"
+				}
+				if(!res_enc[enc]) 
+					res_enc[enc] = 0;
+				res_enc[enc] += 1;
+
+				var str = data[i]["Victim's race"]
+				if(str.toLowerCase() === "unknown race" || str === "") {
+					str = "Unknown Race"
+				}
+				else if (str.toLowerCase().includes("hispanic")){
+					str = "Hispanic"
+				}
+				else if (str.toLowerCase().includes("hispanic")){
+					str = "Hispanic"
+				}
+				else if (str.toLowerCase() === "white"){
+					str = "White"
+				}
+				if(!res[str]) 
+					res[str] = 0;
+				res[str] += 1;
+
+				var cause = data[i]["Cause of death"]
+				if(cause.toLowerCase().includes("asphyxiated")) {
+					if(!res_cause["Asphyxiated"]) 
+						res_cause["Asphyxiated"] = 0;
+					res_cause["Asphyxiated"] += 1;
+				}
+				if (cause.toLowerCase().includes("pepper spray")){
+					if(!res_cause["Pepper Spray"]) 
+						res_cause["Pepper Spray"] = 0;
+					res_cause["Pepper Spray"] += 1;
+				}
+				if (cause.toLowerCase().includes("physical restraint")){
+					if(!res_cause["Physical Restraint"]) 
+						res_cause["Physical Restraint"] = 0;
+					res_cause["Physical Restraint"] += 1;
+				}
+				if (cause.toLowerCase().includes("bean")){
+					if(!res_cause["Bean Bag Gun"]) 
+						res_cause["Bean Bag Gun"] = 0;
+					res_cause["Bean Bag Gun"] += 1;
+				}
+				if (cause.toLowerCase().includes("beaten") || cause.toLowerCase().includes("baton")){
+					if(!res_cause["Beaten"]) 
+						res_cause["Beaten"] = 0;
+					res_cause["Beaten"] += 1;
+				}
+				if (cause.toLowerCase().includes("gunshot")){
+					if(!res_cause["Gunshot"]) 
+						res_cause["Gunshot"] = 0;
+					res_cause["Gunshot"] += 1;
+				}
+				if (cause.toLowerCase().includes("dog")){
+					if(!res_cause["Police Dog"]) 
+						res_cause["Police Dog"] = 0;
+					res_cause["Police Dog"] += 1;
+				}
+				if (cause.toLowerCase().includes("taser")){
+					if(!res_cause["Taser"]) 
+						res_cause["Taser"] = 0;
+					res_cause["Taser"] += 1;
+				}
+				if (cause.toLowerCase().includes("vehicle")){
+					if(!res_cause["Vehicle"]) 
+						res_cause["Vehicle"] = 0;
+					res_cause["Vehicle"] += 1;
+				}
+				
+				if (cause.toLowerCase().includes("stab") ||cause.toLowerCase().includes("instrument") || cause.toLowerCase().includes("bomb") || cause.toLowerCase().includes("chemical") || cause.toLowerCase().includes("less lethal")){
+					if(!res_cause["Other"]) 
+						res_cause["Other"] = 0;
+					res_cause["Other"] += 1;
+				}
+				
+			}
+		}).then(function() {
+			for (var i in res_enc) {
+				dataset.nodes.push({name: i, count: res_enc[i]});
+			}
+			for (var i in res) {
+				dataset.nodes2.push({name: i, count: res[i]});
+			}
+			for (var i in res_cause) {
+				dataset.nodes3.push({name: i, count: res_cause[i]});
+			}
+			// console.log(dataset.nodes)
+			})
+		.then(function() {
+			var colors = d3.scaleOrdinal(d3.schemeCategory10);
+
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			
+			//Create edges as lines
+			var edges = svg.selectAll("line")
+				.data(dataset.edges)
+				.enter()
+				.append("line")
+				.style("stroke", "#ccc")
+				.style("stroke-width", 1);
+			
+			//Create nodes as circles
+			var nodes = svg.selectAll("circle")
+				.data(dataset.nodes)
+				.enter()
+				.append("circle")
+				.attr("r", function (d, i) {
+					// console.log(d);
+					if (d.count<100)
+						return d.count/3;
+					else if (d.count>4000)
+						return d.count/60;
+					else if (d.count>1000)
+						return d.count/16;
+					else if (d.count>400)
+						return d.count/12.5;
+					else if (d.count>200)
+						return d.count/9;
+					else return d.count/18;
+				})
+				.style("fill", function(d, i) {
+					return "red";
+				});
+			
+			//Create nodes as circles
+			var id = 0
+			var nodes2 = svg.selectAll("circle2")
+				.data(dataset.nodes2)
+				.enter()
+				.append("circle")
+				.attr("id", function (d) {
+					id = id + 1;
+					return id;
+				})
+				.attr("r", function (d,i) {
+					// console.log(d);
+					if (d.count>1000)
+						return d.count/30;
+					else if (d.count<100)
+						return d.count/1.2;
+					else return d.count/2
+				})
+				.style("fill", function(d, i) {
+					return colors(i);
+				});
+
+			var nodes3 = svg.selectAll("circle3")
+				.data(dataset.nodes3)
+				.enter()
+				.append("circle")
+				.attr("r", function (d,i) {
+					// console.log(d);
+					if (d.count>1000)
+						return d.count/70;
+					else if (d.count>500)
+						return d.count/15;
+					else if (d.count<20)
+						return d.count*3;
+					else return d.count;
+				})
+				.style("fill", function(d, i) {
+					// console.log(d);
+					return "blue";
+				});
+
+			//Add a simple tooltip
+			nodes.append("title")
+				.text(function(d) {
+					return d.name;
+				});
+			nodes2.append("title")
+				.text(function(d) {
+					return d.name;
+				});
+			nodes3.append("title")
+				.text(function(d) {
+					return d.name;
+				});	 
+		//Every time the simulation "ticks", this will be called
+
+			// edges.attr("x1", function(d) { return d.source.x; })
+			// 	 .attr("y1", function(d) { return d.source.y; })
+			// 	 .attr("x2", function(d) { return d.target.x; })
+			// 	 .attr("y2", function(d) { return d.target.y; });
+			nodes.attr("cx", function(d, i) { 
+					d.x = padding + (w-w/2)*i/5;
+					return d.x; 
+				})
+				.attr("cy", function(d, i) { 
+					d.y = h/5;
+					return d.y; 
+				});
+			nodes2.attr("cx", function(d, i) { 
+					d.x = padding + (w-w/10)*i/6;
+					return d.x; 
+				})
+				.attr("cy", function(d, i) { 
+					d.y = h/2;
+					return d.y; 
+				});
+			nodes3.attr("cx", function(d, i) { 
+					d.x = padding + (w-w/2)*i/5;
+					return d.x; })
+				.attr("cy", function(d, i) { 
+					d.y = h/1.3;
+					return d.y; });
+
+
+			// var link = d3.linkHorizontal()
+			// 	.data(dataset.nodes2)
+			// 	.enter()
+			// 	.source( function (d){
+			// 		console.log(d);
+			// 		// [d.x, d.y]
+			// 	})
+			// 	.target( d => {[d.x, d.y]} );
+			var svgLinks = svg.selectAll('line.link')
+							.data(dataset.nodes)
+							.enter().append('svg:line')
+							.attr("class", "link")
+							.attr("style","stroke:black")
+							.attr("x1", function(d) { 
+								return d.x; 
+							})
+							.attr("y1", function(d) { return d.y; })
+							.attr("x2", function(d) { return 3; })
+							.attr("y2", function(d) { return 3; });
+
+			var dataset2 = [
+				{name: "Asian", count: 132, x: 0, y:0, con: []},
+				{name: "Pacific Islander", count: 49, x: 0, y:0, con: []},
+				{name: "Native American", count: 124, x: 0, y:0, con: []},
+				{name: "Black", count: 2240, x: 0, y:0, con: []},
+				{name: "Hispanic", count: 1536, x: 0, y:0, con: []},
+				{name: "White", count: 3899, x: 0, y:0, con: []},
+				{name: "Unknown Race", count: 1058, x: 0, y:0, con: []}
+			]
+			d3.json("sample.json").then(function(data2){
+				console.log(data2.length);
+				console.log(document.getElementById("2"));
+				var nodes2a = svg.selectAll("circle2a")
+				.data(data2)
+				.enter()
+				.append("circle")
+				.attr("r", function (d,i) {
+					// console.log(d);
+					if (d.count>1000)
+						return d.count/30;
+					else if (d.count<100)
+						return d.count/1.2;
+					else return d.count/2
+				})
+				.style("fill", function(d, i) {
+					return colors(i);
+				});
+				
+				nodes2a.attr("cx", function(d, i) { 
+						d.x = padding;
+						return d.x; 
+					})
+					.attr("cy", function(d, i) { 
+						d.y = 0;
+						return d.y; 
+					});
+			})
+
+
+
+		})
+	
+		
+		
+	
+
+	</script>
+	</body>
+</html>
