@@ -56,10 +56,18 @@ h2 {
 
 .loading {
   position: absolute;
-  font-family: 'Robot', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: bold;
   fill: white;
   font-size: 48px;
+  text-align: center;
+}
+
+.legend {
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  fill: black;
+  font-size: 11px;
   text-align: center;
 }
 

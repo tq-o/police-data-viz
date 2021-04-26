@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>slider</title>
+	<link rel="shortcut icon" href="#">
+	<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://unpkg.com/d3-simple-slider"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+	<link rel="stylesheet" href="../css/US_map.css" />
+	<style type="text/css">
+	</style>
+</head>
+
+<body>
+	<script type="text/javascript">	
+		var legend_svg = d3.select("body")
+							.append("div")
+							.attr("class", "legend")
+							.append("svg")
+							.attr("width", 1000)
+							.attr("height", 500);
+		var legend = legend_svg.append("rect")
+						.attr("width", 250)
+						.attr("height", 200)
+						.attr("fill", "white")
+						.attr("transform", "translate(700, 50)");
+		var ex_tri_gray = legend_svg.append("path")
+								.attr("d", d3.symbol().type(d3.symbolTriangle).size(300))
+								.attr("fill", "#343434")
+								.attr("transform", "translate(720, 130)");
+		var ex_tri_gray_txt = legend_svg.append("text")
+								.attr("x", 750)
+								.attr("y", 132.5)
+								.text("Black person with no criminal charges");
+		var ex_tri_color = legend_svg.append("path")
+								.attr("d", d3.symbol().type(d3.symbolTriangle).size(300))
+								.attr("fill", "#ff800e")
+								.attr("transform", "translate(720, 90)");
+		var ex_tri_color_txt = legend_svg.append("text")
+								.attr("x", 750)
+								.attr("y", 92.5)
+								.text("Black person with criminal charges");
+		var ex_circ_gray = legend_svg.append("circle")
+								.attr("r", 25/5*1.5)
+								.attr("cx", 720)
+								.attr("cy", 210)
+								.attr("fill", "#343434");
+		var ex_circ_gray_txt = legend_svg.append("text")
+								.attr("x", 750)
+								.attr("y", 212.5)
+								.text("Incident with police body camera off");
+		var ex_circ_color = legend_svg.append("circle")
+								.attr("r", 25/5*1.5)
+								.attr("cx", 720)
+								.attr("cy", 170)
+								.attr("fill", "#006ba4");
+		var ex_circ_color_txt = legend_svg.append("text")
+								.attr("x", 750)
+								.attr("y", 172.5)
+								.text("Incident with police body camera on");
+								
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width", 1000)
+					.attr("height", 500)
+					.attr("transform", "translate(0, -500)");
+					
+		var slider = d3.sliderBottom()
+						.min(2013)
+						.max(2021)
+						.width(300)
+						.ticks(9)
+						.tickFormat(d3.format("d"))
+						.step(1)
+						.default(2021);
+						
+		var slider_g = svg.append("g")
+							.attr('transform', 'translate(350,250)')
+							.call(slider);
+		slider_g.selectAll(".tick text").attr("fill", "#787878");
+		slider_g.selectAll(".parameter-value text").attr("fill", "#fff");
+		
+		//var group_idx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+		var group_idx = [...Array(51).keys()];
+		var tri_gray_group = svg.selectAll("path")
+								.data(group_idx)
+								.enter()
+								.append("path")
+								.attr("d", d3.symbol().type(d3.symbolTriangle).size(300*2/5*1.5))
+								.attr("fill", "#343434")
+								.attr("transform", function(d) {
+									var x = ((d-1) % 5)*32;
+									//x += 420;
+									x += 350;
+									var y = parseInt((d-1) / 5)*20;
+									y += 50;
+									return "translate("+x+", "+y+")";
+								});
+		//var group_idx2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+		var group_idx2 = [...Array(51).keys()].slice(1);
+		var circ_gray_group = svg.selectAll("circle")
+								.data(group_idx2)
+								.enter()
+								.append("circle")
+								.attr("r", 25/5*1.5)
+								.attr("cx", function(d) {
+									return ((d-1) % 5)*32 + 525;
+								})
+								.attr("cy", function(d) {
+									return parseInt((d-1) / 5)*20 + 47.5;
+								})
+								.attr("fill", "#343434");
+		
+		d3.csv("../data/policekillings.csv")
+			.then(function(csv) {
+				var data_obj = Array.from(csv, x => ({ race: x["Victim's race"],
+														cam: x["Body Camera (Source: WaPo)"],
+														charges: x["Criminal Charges?"],
+														year: x["Date of Incident (month/day/year)"].slice(-4)
+				}));
+				var years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021];
+				var data_per_year = [];
+				for (year in years) {
+					var cam = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.cam.toLowerCase() == "yes" && d.cam); }).length;
+					cam /= parseFloat(data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.cam); }).length);
+					var charges = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "Black" && d.charges != "No known charges"); }).length;
+					charges /= parseFloat(data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "Black"); }).length);
+					data_per_year.push([cam, charges]);
+				}
+				console.log(data_per_year);
+				var colored_shapes_g = svg.append("g");
+				var color_shape_groups = colored_shapes_g.selectAll("g")
+														.data(data_per_year)
+														.enter()
+														.append("g")
+														.attr("class", "colored")
+														.attr("transform", "translate(0, 0)");
+				var tri_color_group = color_shape_groups.selectAll("path")
+														.data([...Array(51).keys()].slice(0, parseInt((data_per_year[8][0])*50)+1))
+														.enter()
+														.append("path")
+														.attr("d", d3.symbol().type(d3.symbolTriangle).size(300*2/5*1.5))
+														.attr("fill", "#ff800e")
+														.attr("transform", function(d) {
+															var x = ((d-1) % 5)*32;
+															//x += 420;
+															x += 350;
+															var y = parseInt((d-1) / 5)*20;
+															y += 50;
+															return "translate("+x+", "+y+")";
+														})
+														.attr("opacity", function(d) {
+															if (d == 0) { return 0; }
+															else { return 1; }
+														 });
+				var circ_color_group = color_shape_groups.selectAll("circle")
+														 .data([...Array(51).keys()].slice(0, parseInt((data_per_year[8][1])*50)+1))
+														 .enter()
+														 .append("circle")
+														 .attr("r", 25/5*1.5)
+														 .attr("cx", function(d) {
+															 return ((d-1) % 5)*32 + 525;
+														 })
+														 .attr("cy", function(d) {
+															 return parseInt((d-1) / 5)*20 + 47.5;
+														 })
+														 .attr("fill", "#006ba4")
+														 .attr("opacity", function(d) {
+															if (d == 0) { return 0; }
+															else { return 1; }
+														 });
+
+				slider.on("onchange", val => {
+							d3.select("p#value-step").text(d3.format("d")(val));
+							color_shape_groups.selectAll("*").remove();
+							year_idx = years.indexOf(parseInt(val));
+							tri_color_group = color_shape_groups.selectAll("path")
+														.data([...Array(51).keys()].slice(0, parseInt((data_per_year[year_idx][0])*50)+1))
+														.enter()
+														.append("path")
+														.attr("d", d3.symbol().type(d3.symbolTriangle).size(300*2/5*1.5))
+														.attr("fill", "#ff800e")
+														.attr("transform", function(d) {
+															var x = ((d-1) % 5)*32;
+															//x += 420;
+															x += 350;
+															var y = parseInt((d-1) / 5)*20;
+															y += 50;
+															return "translate("+x+", "+y+")";
+														})
+														.attr("opacity", function(d) {
+															if (d == 0) { return 0; }
+															else { return 1; }
+														 });
+							circ_color_group = color_shape_groups.selectAll("circle")
+														 .data([...Array(51).keys()].slice(0, parseInt((data_per_year[year_idx][1])*50)+1))
+														 .enter()
+														 .append("circle")
+														 .attr("r", 25/5*1.5)
+														 .attr("cx", function(d) {
+															 return ((d-1) % 5)*32 + 525;
+														 })
+														 .attr("cy", function(d) {
+															 return parseInt((d-1) / 5)*20 + 47.5;
+														 })
+														 .attr("fill", "#006ba4")
+														 .attr("opacity", function(d) {
+															if (d == 0) { return 0; }
+															else { return 1; }
+														 });
+						});
+			});
+	</script>
+</body>
+
+</html>
