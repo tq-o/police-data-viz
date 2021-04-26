@@ -17,17 +17,6 @@ dataset2 = [
 				{"name": "Unknown Race", "count": 1058, 'x': 0, 'y':0, 'con': []}
 			]  
 
-# reading csv file
-# import pandas as pd
-# df = pd.read_csv(filename, encoding="utf8")
-# # saved_column = df.column_name #you can also use df['column_name']
-# print(len(df))
-# df = pd.DataFrame(df)
-# for i in df.iterrows():
-# #         print(temp)
-# #         var enc = data[i]["Encounter Type (DRAFT)"]
-# #         var cause = data[i]["Cause of death"]
-#     print(i["Victim's race"])
 
 from csv import DictReader
 # iterate over each line as a ordered dictionary and print only few column by column name
@@ -46,7 +35,7 @@ with open(filename, 'r', encoding="utf8") as read_obj:
         elif (enc== "" or enc== "#VALUE!" or enc.lower().find("no crime")!= -1 or enc.lower().find("none") != -1 or enc.lower().find("unknown") != -1 or enc.lower().find("unavailable") != -1):
             enc = "None/Unknown"
         elif (enc.lower().find("other") != -1 or enc.lower().find("substance abuse") != -1 or enc.lower().find("suspicious person") != -1 or enc.lower().find("profiling") != -1):
-            enc = "Other"
+            enc = "Other Type"
         elif (enc.lower().find("violent") != -1):
             enc = "Part 1 Violent Crime"
         elif (enc.lower().find("person with") != -1 or enc.lower().find("weapon") != -1 or enc.lower().find("stabbing") != -1):
@@ -76,8 +65,8 @@ with open(filename, 'r', encoding="utf8") as read_obj:
             cause = "Taser"
         if (cause.lower().find("vehicle") != -1):
             cause = "Vehicle"
-        if (cause.lower().find("stab") != -1 or cause.lower().find("instrument") != -1 or cause.lower().find("bomb") != -1 or cause.lower().find("chemical") != -1 or cause.lower().find("less lethal") != -1): 
-            cause = "Other"
+        if (cause.lower().find("stab") != -1 or cause.lower().find("instrument") != -1 or cause.lower().find("bomb") != -1 or cause.lower().find("chemical") != -1 or cause.lower().find("less lethal") != -1 or cause.lower().find("other") != -1): 
+            cause = "Other Cause"
         for i in dataset2:
             # print(i)
             if (i['name'] == temp): 
@@ -105,91 +94,6 @@ with open(filename, 'r', encoding="utf8") as read_obj:
             
                 else:
                     check_cause = True
-            
-    
-
-# for i in dataset2:
-#     print(i)
-# with open(filename, encoding="utf8") as csvfile:
-#     # creating a csv reader object
-#     csvreader = csv.reader(csvfile)
-      
-#     # extracting field names through first row
-#     fields = next(csvreader)
-#     print(csvreader)
-# #     # extracting each data row one by one
-#     for row in csvreader:
-#         # print(row)
-#         temp = row["Victim's race"]
-#         print(temp)
-#         var enc = data[i]["Encounter Type (DRAFT)"]
-#         var cause = data[i]["Cause of death"]
-#         // if (enc.toLowerCase().includes("domestic") === true) {
-#         // 	enc = "Domestic Violence"
-#         // }
-#         if(str.toLowerCase() === "unknown race" || str === "") {str = "Unknown Race";}
-#         else if (str.toLowerCase().includes("hispanic")){str = "Hispanic"}
-#         else if (str.toLowerCase().includes("hispanic")){str = "Hispanic"}
-#         else if (str.toLowerCase() === "white"){str = "White"}
-# // try
-#         if (enc.toLowerCase().includes("domestic")) {enc = "Domestic Violence"}
-#         else if (enc.toLowerCase().includes("health")|| enc.toLowerCase().includes("mental")){enc = "Health Crisis/Mental Health"}
-#         else if (enc==="" || enc==="#VALUE!" || enc.toLowerCase().includes("no crime")|| enc.toLowerCase().includes("none")|| enc.toLowerCase().includes("unknown")|| enc.toLowerCase().includes("unavailable")){
-#             enc = "None/Unknown"
-#         }
-#         else if (enc.toLowerCase().includes("other") || enc.toLowerCase().includes("substance abuse") || enc.toLowerCase().includes("suspicious person") || enc.toLowerCase().includes("profiling")){
-#             enc = "Other"
-#         }
-#         else if (enc.toLowerCase().includes("violent")){
-#             enc = "Part 1 Violent Crime"
-#         }
-#         else if (enc.toLowerCase().includes("person with")|| enc.toLowerCase().includes("weapon") || enc.toLowerCase().includes("stabbing")){
-#             enc = "Weapon"
-#         }
-#         else if (enc.toLowerCase().includes("traffic")){
-#             enc = "Traffic"
-#         }
-#         else if (enc.toLowerCase().includes("property")){
-#             enc = "Property"
-#         }
-#         else if (enc.toLowerCase().includes("public order")){
-#             enc = "Public Order"
-#         }
-#         // try
-#         if(cause.toLowerCase().includes("asphyxiated")) {
-#             cause = "Asphyxiated"
-#         }
-#         if (cause.toLowerCase().includes("pepper spray")){
-#             cause = "Pepper Spray"
-#         }
-#         if (cause.toLowerCase().includes("physical restraint")){
-#             cause = "Physical Restraint"
-#         }
-#         if (cause.toLowerCase().includes("bean")){
-#             cause = "Bean Bag Gun"
-#         }
-#         if (cause.toLowerCase().includes("beaten") || cause.toLowerCase().includes("baton")){
-#             cause = "Beaten"
-#         }
-#         if (cause.toLowerCase().includes("gunshot")){
-#             cause = "Gunshot"
-#         }
-#         if (cause.toLowerCase().includes("dog")){
-#             cause = "Police Dog"
-#         }
-#         if (cause.toLowerCase().includes("taser")){
-#             cause = "Taser"
-#         }
-#         if (cause.toLowerCase().includes("vehicle")){
-#             cause = "Vehicle"
-#         }
-        
-#         if (cause.toLowerCase().includes("stab") ||cause.toLowerCase().includes("instrument") || cause.toLowerCase().includes("bomb") || cause.toLowerCase().includes("chemical") || cause.toLowerCase().includes("less lethal")){ 
-#             cause = "Other"
-#         }
-  
-#     # get total number of rows
-#     print("Total no. of rows: %d"%(csvreader.line_num))
   
 import json
 

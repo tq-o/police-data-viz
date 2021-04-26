@@ -47,7 +47,7 @@
 					enc = "None/Unknown"
 				}
 				else if (enc.toLowerCase().includes("other") === true || enc.toLowerCase().includes("substance abuse") === true || enc.toLowerCase().includes("suspicious person") === true || enc.toLowerCase().includes("profiling") === true){
-					enc = "Other"
+					enc = "Other Type"
 				}
 				else if (enc.toLowerCase().includes("violent") === true){
 					enc = "Part 1 Violent Crime"
@@ -133,9 +133,9 @@
 				}
 				
 				if (cause.toLowerCase().includes("stab") ||cause.toLowerCase().includes("instrument") || cause.toLowerCase().includes("bomb") || cause.toLowerCase().includes("chemical") || cause.toLowerCase().includes("less lethal")){
-					if(!res_cause["Other"]) 
-						res_cause["Other"] = 0;
-					res_cause["Other"] += 1;
+					if(!res_cause["Other Cause"]) 
+						res_cause["Other Cause"] = 0;
+					res_cause["Other Cause"] += 1;
 				}
 				
 			}
@@ -161,12 +161,12 @@
 						.attr("height", h);
 			
 			//Create edges as lines
-			var edges = svg.selectAll("line")
-				.data(dataset.edges)
-				.enter()
-				.append("line")
-				.style("stroke", "#ccc")
-				.style("stroke-width", 1);
+			// var edges = svg.selectAll("line")
+			// 	.data(dataset.edges)
+			// 	.enter()
+			// 	.append("line")
+			// 	.style("stroke", "#ccc")
+			// 	.style("stroke-width", 1);
 			
 			//Create nodes as circles
 			var nodes = svg.selectAll("circle")
@@ -189,7 +189,7 @@
 				})
 				.style("fill", function(d, i) {
 					return "red";
-				});
+				}).style("opacity", 0.3);
 			
 			//Create nodes as circles
 			var id = 0
@@ -230,7 +230,7 @@
 				.style("fill", function(d, i) {
 					// console.log(d);
 					return "blue";
-				});
+				}).style("opacity", 0.3);;
 
 			//Add a simple tooltip
 			nodes.append("title")
@@ -252,7 +252,7 @@
 			// 	 .attr("x2", function(d) { return d.target.x; })
 			// 	 .attr("y2", function(d) { return d.target.y; });
 			nodes.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/2)*i/5;
+					d.x = padding + (w-w/2)*i/5.5;
 					return d.x; 
 				})
 				.attr("cy", function(d, i) { 
@@ -260,7 +260,7 @@
 					return d.y; 
 				});
 			nodes2.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/10)*i/6;
+					d.x = padding + (w-w/10)*i/7;
 					return d.x; 
 				})
 				.attr("cy", function(d, i) { 
@@ -268,70 +268,276 @@
 					return d.y; 
 				});
 			nodes3.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/2)*i/5;
+					d.x = padding + (w-w/2)*i/6;
 					return d.x; })
 				.attr("cy", function(d, i) { 
 					d.y = h/1.3;
 					return d.y; });
 
+			console.log(dataset.nodes2.filter(i => i.name === "White")[0].x)
+			var dataset2 = []
 
-			// var link = d3.linkHorizontal()
-			// 	.data(dataset.nodes2)
-			// 	.enter()
-			// 	.source( function (d){
-			// 		console.log(d);
-			// 		// [d.x, d.y]
-			// 	})
-			// 	.target( d => {[d.x, d.y]} );
-			var svgLinks = svg.selectAll('line.link')
-							.data(dataset.nodes)
-							.enter().append('svg:line')
-							.attr("class", "link")
-							.attr("style","stroke:black")
-							.attr("x1", function(d) { 
-								return d.x; 
-							})
-							.attr("y1", function(d) { return d.y; })
-							.attr("x2", function(d) { return 3; })
-							.attr("y2", function(d) { return 3; });
-
-			var dataset2 = [
-				{name: "Asian", count: 132, x: 0, y:0, con: []},
-				{name: "Pacific Islander", count: 49, x: 0, y:0, con: []},
-				{name: "Native American", count: 124, x: 0, y:0, con: []},
-				{name: "Black", count: 2240, x: 0, y:0, con: []},
-				{name: "Hispanic", count: 1536, x: 0, y:0, con: []},
-				{name: "White", count: 3899, x: 0, y:0, con: []},
-				{name: "Unknown Race", count: 1058, x: 0, y:0, con: []}
-			]
-			d3.json("sample.json").then(function(data2){
-				console.log(data2.length);
-				console.log(document.getElementById("2"));
-				var nodes2a = svg.selectAll("circle2a")
-				.data(data2)
-				.enter()
-				.append("circle")
-				.attr("r", function (d,i) {
-					// console.log(d);
-					if (d.count>1000)
-						return d.count/30;
-					else if (d.count<100)
-						return d.count/1.2;
-					else return d.count/2
-				})
-				.style("fill", function(d, i) {
-					return colors(i);
-				});
+			myFunction = (e, d) =>{
+				//  document.getElementById("lines2");
+				// d = {name: "Domestic Violence", count: 5};
+				var x = document.getElementsByClassName(e);
+				for (var y = 0; y < x.length; y++) {
+					// console.log(y)
+					if (x[y].style.display === "none") {
+						x[y].style.display = "block";
+					} else {
+						x[y].style.display = "none";
+					}}
 				
-				nodes2a.attr("cx", function(d, i) { 
-						d.x = padding;
-						return d.x; 
-					})
-					.attr("cy", function(d, i) { 
-						d.y = 0;
-						return d.y; 
-					});
+				var c = d3.selectAll("circle")._groups[0];
+				for (var a = 0; a < c.length; a++){
+				// .textContent
+				 for (var item in d){
+					// console.log(d[item])
+					if (c[a].innerHTML.includes(d[item].name)) {
+						if (c[a].style.opacity === "1")
+							c[a].style.opacity = "0.5";
+						else
+							c[a].style.opacity = "1";
+					}
+				 }
+				}
+			}
+			d3.json("sample.json").then(function(data2){
+				// console.log(data2.length);
+				// console.log(data2)
+				dataset2 = [
+					{name: "Asian", count: 132, x: dataset.nodes2.filter(i => i.name === "Asian")[0].x, y:dataset.nodes2.filter(i => i.name === "Asian")[0].y, con: data2.filter(i => i.name === "Asian")[0].con},
+					{name: "Pacific Islander", count: 49, x: dataset.nodes2.filter(i => i.name === "Pacific Islander")[0].x, y:dataset.nodes2.filter(i => i.name === "Pacific Islander")[0].y, con: data2.filter(i => i.name === "Pacific Islander")[0].con},
+					{name: "Native American", count: 124, x: dataset.nodes2.filter(i => i.name === "Native American")[0].x, y:dataset.nodes2.filter(i => i.name === "Native American")[0].y, con: data2.filter(i => i.name === "Native American")[0].con},
+					{name: "Black", count: 2240, x: dataset.nodes2.filter(i => i.name === "Black")[0].x, y:dataset.nodes2.filter(i => i.name === "Black")[0].y, con: data2.filter(i => i.name === "Black")[0].con},
+					{name: "Hispanic", count: 1536, x: dataset.nodes2.filter(i => i.name === "Hispanic")[0].x, y:dataset.nodes2.filter(i => i.name === "Hispanic")[0].y, con: data2.filter(i => i.name === "Hispanic")[0].con},
+					{name: "White", count: 3899, x: dataset.nodes2.filter(i => i.name === "White")[0].x, y:dataset.nodes2.filter(i => i.name === "White")[0].y, con: data2.filter(i => i.name === "White")[0].con},
+					{name: "Unknown Race", count: 1058, x: dataset.nodes2.filter(i => i.name === "Unknown Race")[0].x, y:dataset.nodes2.filter(i => i.name === "Unknown Race")[0].y, con: data2.filter(i => i.name === "Unknown Race")[0].con}
+				]
+			// console.log(dataset2.filter(i => i.name === "White")[0].con)
+				//Unknown Race
+				const unknown = dataset2.filter(i => i.name === "Unknown Race")[0].con
+				var svgLinks = svg.selectAll('line.link')
+									.data(unknown)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Unknown Race")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Unknown Race")[0].y; });
+				document.getElementById("1").addEventListener("click", () => myFunction("link", dataset2.filter(i => i.name === "Unknown Race")[0].con));
+				
+				//"White"
+				const white = dataset2.filter(i => i.name === "White")[0].con
+				var svgLinks2 = svg.selectAll('line.link2')
+									.data(white)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link2")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else {
+											// console.log(d.name)
+											return dataset.nodes.filter(i => i.name === d.name)[0].x;}
+											 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "White")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "White")[0].y; });
+				
+				document.getElementById("2").addEventListener("click", () => myFunction("link2", dataset2.filter(i => i.name === "White")[0].con));
+
+				//"Hispanic"
+				const hisp = dataset2.filter(i => i.name === "Hispanic")[0].con
+				var svgLinks2 = svg.selectAll('line.link3')
+									.data(hisp)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link3")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Hispanic")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Hispanic")[0].y; });
+				
+				document.getElementById("3").addEventListener("click", () => myFunction("link3", dataset2.filter(i => i.name === "Hispanic")[0].con));
+
+				//Black
+				const black = dataset2.filter(i => i.name === "Black")[0].con
+				var svgLinks2 = svg.selectAll('line.link4')
+									.data(black)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link4")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Black")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Black")[0].y; });
+				
+				document.getElementById("4").addEventListener("click", () => myFunction("link4", dataset2.filter(i => i.name === "Black")[0].con));
+				
+				//Native American
+				const nav = dataset2.filter(i => i.name === "Native American")[0].con
+				var svgLinks2 = svg.selectAll('line.link5')
+									.data(nav)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link5")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Native American")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Native American")[0].y; });
+				
+				document.getElementById("5").addEventListener("click", () => myFunction("link5", dataset2.filter(i => i.name === "Native American")[0].con));
+				
+				//Pacific Islander
+				const pac = dataset2.filter(i => i.name === "Pacific Islander")[0].con
+				var svgLinks2 = svg.selectAll('line.link6')
+									.data(pac)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link6")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Pacific Islander")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Pacific Islander")[0].y; });
+				
+				document.getElementById("6").addEventListener("click", () => myFunction("link6", dataset2.filter(i => i.name === "Pacific Islander")[0].con ));
+
+				//Asian
+				const asian = dataset2.filter(i => i.name === "Asian")[0].con
+				var svgLinks2 = svg.selectAll('line.link7')
+									.data(asian)
+									.enter()
+									.append('svg:line')
+									.attr("class", "link7")
+									.attr("style","stroke:black")
+									.style("display", "none")
+									.attr("x1", function(d) { 
+										// console.log(d.x)
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].x; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].x; 
+									})
+									.attr("y1", function(d) {
+										// console.log(d.name) 
+										if (dataset.nodes3.filter(i => i.name === d.name) != 0){
+											return dataset.nodes3.filter(i => i.name === d.name)[0].y; 
+										}
+										else 
+											return dataset.nodes.filter(i => i.name === d.name)[0].y; 
+									})
+									.attr("x2", function(d) {
+										return dataset2.filter(i => i.name === "Asian")[0].x; })
+									.attr("y2", function(d) { return dataset2.filter(i => i.name === "Asian")[0].y; });
+				
+				document.getElementById("7").addEventListener("click", () => myFunction("link7", dataset2.filter(i => i.name === "Asian")[0].con));
+			
+			
 			})
+
+			
 
 
 
