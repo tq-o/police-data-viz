@@ -29,6 +29,111 @@
 		var spider_padding = 25;
 		var spider_graph_size = 300;
 		
+		var pd_div = d3.select("body")
+						.append("div")
+						.attr("class", "pdtip")
+						.style("opacity", 0);
+		pd_div.append("h1");
+		pd_div.append("h2").attr("class", "uppertext");
+		pd_div.append("hr");
+		pd_div.append("h2").attr("class", "bottomtext");
+		var pd_table = pd_div.append("svg")
+							.attr("height", 200)
+							.attr("width", 300);
+									
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 0)
+				.attr("fill", "#006ba4");
+		var pd_black_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 12.5)
+				.text("Black");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 25)
+				.attr("fill", "#595959");
+		var pd_hispanic_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 37.5)
+				.text("Hispanic");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 50)
+				.attr("fill", "#ffbc79");
+		var pd_native_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 62.5)
+				.text("Native American");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 75)
+				.attr("fill", "#5f9ed1");
+		var pd_asian_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 87.5)
+				.text("Asian");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 100)
+				.attr("fill", "#a2c8ec");
+		var pd_pacific_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 112.5)
+				.text("Pacific Islander");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 125)
+				.attr("fill", "#ff800e");
+		var pd_white_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 137.5)
+				.text("White");
+
+		pd_table.append("rect")
+				.attr("height", 15)
+				.attr("width", 15)
+				.attr("x", 50)
+				.attr("y", 150)
+				.attr("fill", "#ababab");
+		var pd_unknown_text = pd_table.append("text")
+				.attr("class", "spider-label")
+				.attr("x", 75)
+				.attr("y", 162.5)
+				.text("Unknown race");
+				
+		pd_table.append("line")
+				.style("stroke", "black")
+				.style("stroke-width", 1)
+				.style("shape-rendering", "crispEdges")
+				.attr("x1", 200)
+				.attr("y1", 0)
+				.attr("x2", 200)
+				.attr("y2", 165);
+						
 		var bar_svg = spider_div.append("svg")
 						.attr("width", 300)
 						.attr("height", 20);
@@ -41,6 +146,15 @@
 					.append("svg")
 					.attr("width", 1000)
 					.attr("height", 500);
+					
+		
+		var loading_txt = svg.append("text")
+							.attr("x", 350)
+							.attr("y", 250)
+							.attr("class", "loading")
+							.text("LOADING...");
+					
+		var map_container = svg.append("g");
 					
 		d3.json("https://d3js.org/us-10m.v1.json")
 			.then(function(json) {
@@ -104,11 +218,6 @@
 												return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
 											});
 						
-						var loading_txt = svg.append("text")
-											.attr("x", 350)
-											.attr("y", 250)
-											.attr("class", "loading")
-											.text("LOADING...");
 										
 						//var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
 						var features = topojson.feature(json, json.objects.states).features;
@@ -307,7 +416,7 @@
 												.text(races[race]);
 								}
 							
-								svg.selectAll("path")
+								map_container.selectAll("path")
 									.data(features)
 									.enter()
 									.append("path")
@@ -389,6 +498,76 @@
 									})
 									.on("mouseleave", function(event, d) {
 										spider_div.style("opacity", 0);
+									});
+								
+								//var pd_svg = d3.select("body")
+								//				.append("svg")
+								//				.attr("height", 500)
+								//				.attr("width", 1000)
+								//				.attr("class", "no-hover")
+								//				.attr("transform", "translate(0, -505)");
+								d3.json("../data/pd_coords.geojson")
+									.then(function(pdcoord) {
+										d3.csv("../data/killingsbypd.csv")
+											.then(function(pdcsv) {
+												var values = Array.from(pdcsv, x => ({ PD: x["PD"],
+																						data: [x["Black People Killed by Police (1/1/2013-12/31/2020)"],
+																						x["Hispanic People Killed by Police (1/1/2013-12/31/2020)"],
+																						x["Native American People Killed by Police (1/1/2013-12/31/2020)"],
+																						x["Asian People Killed by Police (1/1/2013-12/31/2020)"],
+																						x["Pacific Islanders Killed by Police (1/1/2013-12/31/2020)"],
+																						x["White People Killed by Police (1/1/2013-12/31/2020)"],
+																						x["Unknown Race People Killed by Police (1/1/2013-12/31/2020)"]]
+												}));
+												var numbers = pd_table.selectAll("text.val")
+																	.data(values[0].data)
+																	.enter()
+																	.append("text")
+																	.attr("class", "val")
+																	//.attr("id", "val")
+																	.attr("x", 225)
+																	.attr("y", function(d, i) {
+																		return 12.5 + (25*i);
+																	})
+																	.text(function(d, i) {
+																		return d;
+																	});
+																	
+												var pd_proj = d3.geoAlbers().scale([960]);
+												var gen = d3.geoPath().projection(pd_proj);
+												pds = svg.selectAll("path.pd")
+														.data(pdcoord.features)
+														.enter()
+														.append("path")
+														.attr("class", "pd")
+														.attr("d", gen)
+														.attr("d", gen.pointRadius(2.5))
+														.attr("transform", "translate(4, -25)")
+														.attr("stroke", "#fff")
+														.attr("stroke-width", 1.5)
+														.attr("fill", "#000")
+														.on("mouseover", function(event, d) {
+															pd_div.style("opacity", 1);
+															this.parentNode.appendChild(this);
+														})
+														.on("mousemove", function(event, d) {
+															var mouse_pos = d3.pointer(event, svg);
+															pd_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+															var pd_hovered = pdcsv[pdcoord.features.indexOf(d)];
+															pd_div.selectAll("h1").text(pd_hovered["PD"].toUpperCase());
+															pd_div.selectAll("h2.uppertext").text("Instances of Fatal Police Violence: "+pd_hovered["All People Killed by Police (1/1/2013-12/31/2020)"]);
+															pd_div.selectAll("h2.bottomtext").text("Average Annual Police Killings (per 1,000,000)");
+															var pd_hovered_data = values.filter(function(d, i) { return d.PD == pd_hovered["PD"]; })[0];
+															numbers.data(pd_hovered_data.data)
+																	.transition(1)
+																	.text(function(d, i) {
+																		return d;
+																	});
+														})
+														.on("mouseleave", function(event, d) {
+															pd_div.style("opacity", 0);
+														});
+											});
 									});
 									
 								var grad = svg.append("defs")
