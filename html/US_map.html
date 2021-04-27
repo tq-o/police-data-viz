@@ -18,6 +18,8 @@
 	<script type="text/javascript">
 		var proj_state = d3.geoAlbers().scale([750]);
 		//var path_state = d3.geoPath().projection(proj_state);
+		
+		// SPIDER GRAPH TOOLTIP INITIALIZATION
 
 		var spider_div = d3.select("body")
 							.append("div")
@@ -28,6 +30,8 @@
 		spider_div.append("h2").text("Breakdown of Police Killings by Race");
 		var spider_padding = 25;
 		var spider_graph_size = 300;
+		
+		// POLICE DEPARTMENT TOOLTIP INITIALIZATION
 		
 		var pd_div = d3.select("body")
 						.append("div")
@@ -142,6 +146,8 @@
 						.attr("width", spider_graph_size)
 						.attr("height", spider_graph_size);
 						
+		// MAP SVG INITIALIZATION
+						
 		var svg = d3.select("body")
 					.append("svg")
 					.attr("width", 1000)
@@ -155,11 +161,66 @@
 							.text("LOADING...");
 					
 		var map_container = svg.append("g");
+		
+		// OPTION DROPDOWN
+		//var state_descriptor = d3.select("body")
+		//					.append("foreignObject")
+		//					.html("<p>State Chart Type &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Police Department Chart Type");
+							//.append("p")
+							//.text("State Chart Type")
+							//.append("b")
+							//.style("word-space", "2em")
+		//var pd_descriptor = d3.select("p")
+		//					.append("div")
+		//					.text("Police Department Chart Type");
+		var state_chart_types = ["Races: Breakdown and Armed vs Unarmed", "City-Level Police Violence on Black People"];
+		var pd_chart_types = ["Police Kill Rates per Race", "Police Violence on Black Mortality Rate"];
+		var state_chart_name = state_chart_types[0];
+		var pd_chart_name = pd_chart_types[0];
+		var selector_p = d3.select("body")
+						.append("p")
+						.attr("class", "selectors")
+		var state_selector = selector_p.append("div")
+											.attr("class", "state_select_div")
+											.text("State Chart Type")
+											.append("p")
+											.append("select")
+											.attr("class", "select")
+											.property("disabled", true);
+		selector_p.append("div").attr("class", "space");
+		var pd_selector = selector_p.append("div")
+											.attr("class", "pd_select_div")
+											.text("Police Department Chart Type")
+											.append("p")
+											.append("select")
+											.attr("class", "select")
+											.property("disabled", true);
+		state_selector.on("change", function(event) {
+			chart_name = state_selector.property("value");
+			console.log(chart_name);
+		});
+		pd_selector.on("change", function(event) {
+			chart_name = pd_selector.property("value");
+			console.log(chart_name);
+		});
+		var state_options = state_selector.selectAll("option")
+							.data(state_chart_types)
+							.enter()
+							.append("option")
+							.text(function(d) { return d; });
+		var pd_options = pd_selector.selectAll("option")
+							.data(pd_chart_types)
+							.enter()
+							.append("option")
+							.text(function(d) { return d; });
+		
+		// LOADING AND USING DATA
 					
 		d3.json("https://d3js.org/us-10m.v1.json")
 			.then(function(json) {
 				d3.csv("../data/killingsbystate.csv")
 					.then(function(csv) {
+						// SPIDER GRAPH AND MAP DATA
 						var totals = Array.from(csv, x => ({ total: parseFloat(x["# People Killed"])/parseInt(x["Total Population"].replace(/,/g, "")),
 															pop: parseInt(x["Total Population"].replace(/,/g, "")),
 															name: x["State"],
@@ -196,8 +257,9 @@
 										.domain(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
 										.range(["#006ba4", "#595959", "#ffbc79", "#5f9ed1", "#a2c8ec", "#ff800e", "#ababab"]);
 										
-						//var stackColumn = (stacked, n) => stacked.map(x => [[x[n][0], x[n][1]]]);
-						//console.log(stackColumn(stacked_totals, 0));
+						
+						// SPIDER TOOLTIP SIDEWAYS BAR
+						
 						var bar_group = bar_svg.selectAll("g")
 										.data(stack([totals[9]]))
 										.enter()
@@ -220,8 +282,10 @@
 						
 										
 						//var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
+						
 						var features = topojson.feature(json, json.objects.states).features;
 						features.sort((a, b) => (parseInt(a["id"]) < parseInt(b["id"])) ? -1 : 1);
+						// SPIDER GRAPH DATA PROCESSING
 						d3.csv("../data/policekillings.csv")
 							.then(function(csv_pk){
 								var instances = Array.from(csv_pk, x => ({ race: x["Victim's race"],
@@ -256,6 +320,8 @@
 									//						  unknown: state_race_bd[6]}));
 									states_spider_data.push(({ state_ab: state_abbr[state], race_data: state_race_bd }));
 								}
+								
+								// SPIDER GRAPH CONSTRUCTION
 																
 								var reverse_spider_scale = d3.scaleLinear()
 													.domain([0, 1])
@@ -415,6 +481,8 @@
 												.attr("class", "spider-label")
 												.text(races[race]);
 								}
+								
+								// MAP CONSTRUCTION
 							
 								map_container.selectAll("path")
 									.data(features)
@@ -500,12 +568,7 @@
 										spider_div.style("opacity", 0);
 									});
 								
-								//var pd_svg = d3.select("body")
-								//				.append("svg")
-								//				.attr("height", 500)
-								//				.attr("width", 1000)
-								//				.attr("class", "no-hover")
-								//				.attr("transform", "translate(0, -505)");
+								// POLICE DEPARTMENT TOOLTIP
 								d3.json("../data/pd_coords.geojson")
 									.then(function(pdcoord) {
 										d3.csv("../data/killingsbypd.csv")
@@ -567,8 +630,12 @@
 														.on("mouseleave", function(event, d) {
 															pd_div.style("opacity", 0);
 														});
+																												
+												
 											});
 									});
+									
+								// LEGEND
 									
 								var grad = svg.append("defs")
 											  .append("linearGradient")
@@ -615,6 +682,11 @@
 								state_legend_axis.selectAll(".domain")
 											.attr("transform", "translate(70, 100)");
 								});
+								
+								// ENABLING DROPDOWNS
+								
+								state_selector.property("disabled", false);
+								pd_selector.property("disabled", false);
 					});
 			});
 		var states = svg.selectAll("path");

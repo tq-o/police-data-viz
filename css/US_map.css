@@ -1,5 +1,6 @@
 body{
   background-color: black;
+  font-family: 'Roboto', sans-serif;
   width: 100%;
   height: 100%;
   margin: 0;
@@ -8,6 +9,19 @@ body{
 }
 
 div {
+}
+
+.state_select_div {
+	display: inline-block;
+}
+
+.pd_select_div {
+	display: inline-block;
+}
+
+.space {
+	width: 50px;
+	display: inline-block;
 }
 
 h1 {
