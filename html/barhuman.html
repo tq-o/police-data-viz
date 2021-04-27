@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v6.min.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    </script>
+  </head>
+  <body>
+    <p id="value"></p>
+    <div id="slider"></div>
+    <script>
+      d3.csv("../data/killingsbystate.csv").then(data => {
+        var state = "California"
+        console.log(data)
+        var d = data.filter(i => i.State === state)[0]
+        console.log(d)
+        var datavars = [224, 84, 29, 3];
+      
+        var temp = {
+          "Asian": d["# Asian people killed"],
+          "Black": d["# Black people killed"],
+          "Hispanic": d["# Hispanic people killed"],
+          "Native American": d["# Native American people killed"],
+          "Pacific Islanders": d["# Pacific Islanders killed"],
+          "Unknown": d["# Unknown Race people killed"],
+          "White": d["# People Killed"],
+          "Total": d["# White people killed"]
+        }
+        console.log(temp)
+        // var datavars = [70, 84, 9, 35];
+        datavars = [parseInt(temp["Asian"]), parseInt(temp["Black"]), 
+                    parseInt(temp["Hispanic"]), parseInt(temp["Native American"]),
+                    parseInt(temp["Pacific Islanders"]), parseInt(temp["Unknown"]),
+                    parseInt(temp["White"])
+                  ];
+        console.log(datavars)
+        var prev_width = [0,datavars[0],
+                          datavars[0] +  datavars[1],
+                          datavars[0] +  datavars[1] +  datavars[2],
+                          datavars[0] +  datavars[1] +  datavars[2],
+                          datavars[0] +  datavars[1] +  datavars[2] +  datavars[3],
+                          datavars[0] +  datavars[1] +  datavars[2] +  datavars[3] +  datavars[4],
+                          datavars[0] +  datavars[1] +  datavars[2] +  datavars[3] +  datavars[4]+  datavars[5]
+                        ];
+        var colors = ['red','blue','darkgray','#606060','pink','purple','green'];
+        var colors2 = ['black','blue','darkgray','#606060'];
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr('width', 1500)
+                    .attr('height', 1000)
+        
+        
+        // Create the scale
+        var xScale = d3.scaleLinear()
+              .domain([0, 4000])        // This is what is written on the Axis: from 0 to 100
+              .range([0, 1500])    // This is where the axis is placed: from 100px to 800px
+
+          // Draw the axis
+        svg.append("g")
+            .attr("transform", "translate(0,50)")      // This controls the vertical position of the Axis
+            .call(d3.axisBottom(xScale));
+
+        var bar =  svg.selectAll('rect')
+          .data(datavars)
+          .enter()
+          .append('rect')
+          .attr('width', function(d){
+              return xScale(d);})
+          .attr('x',function(d, i){
+              return xScale(prev_width[i]); })
+          .attr('fill', function(d, i){ return colors[i]; })
+          .attr('y',0)
+          .attr('height', 30);
+
+
+          // var slider = d3
+          //     .sliderHorizontal()
+          //     .min(2013)
+          //     .max(2021)
+          //     .step(1)
+          //     .width(1500)
+          //     .displayValue(false)
+          //     .ticks(9)
+          //     .tickFormat(d3.format("d"))
+          //     .default(2021)
+          
+          
+          // var slider_g = svg.append('g')
+          //     .attr('transform', 'translate(100,500)')
+          //     .call(slider);
+
+          // slider.on('onchange', (val) => {
+          //       bar.remove();
+          //       console.log(bar.selectAll('rect'))
+          //       bar = svg.selectAll('rect')
+          //           .data(datavars)
+          //           .enter()
+          //           .append('rect')
+          //           .attr('width', function(d){
+          //               return d;})
+          //                         .attr('x',function(d, i){
+          //                         return prev_width[i]; })
+          //           .attr('fill', function(d, i){ return colors2[i]; })
+          //           .attr('y',0)
+          //           .attr('height', 30);
+          //     });
+        
+      })
+      
+    </script>
+    <div id = "Bar"></div>
+  </body>
+</html>
