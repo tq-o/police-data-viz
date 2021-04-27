@@ -1,99 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+        <link rel="stylesheet" href="../css/US_map.css" />
 		<meta charset="utf-8">
 		<title>D3: Stack layout stacked bar chart</title>
+        
 		<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
 		<style type="text/css">
-        .line {
+        
+        .orangeLine {
             fill: none;
             stroke: #ffab00;
             stroke-width: 3;
         }
+
+        .blueLine {
+            fill: none;
+            stroke: #00e1ff;
+            stroke-width: 3;
+        }
         
         .overlay {
-        fill: none;
-        pointer-events: all;
+            fill: none;
+            pointer-events: all;
         }
 
-        /* Style the dots by assigning a fill and stroke */
-        .dot {
+        .orangeDot {
             fill: #ffab00;
             stroke: #fff;
+            height: 10px;
+            width: 10px;
+            background-color: #ffab00;
+            border-radius: 50%;
+            display: inline-block;
         }
+        .blueDot {
+            fill: #00e1ff;
+            stroke: #fff;
+            height: 10px;
+            width: 10px;
+            background-color: #00e1ff;
+            border-radius: 50%;
+            display: inline-block;
+        }
+/* 
+        #tooltip {
+				position: absolute;
+				width: 100px;
+				height: auto;
+				padding: 10px;
+                color: black;
+				background-color: white;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				pointer-events: none;
+			}
+
+		#tooltip.hidden {
+				display: none;
+			}
+
+		#tooltip p {
+				margin: 0;
+				font-family: sans-serif;
+				font-size: 16px;
+				line-height: 20px;
+			} */
+
+            div.tooltip {	
+                position: absolute;			
+                text-align: center;			
+                width: 30px;					
+                height: 14px;					
+                padding: 2px;				
+                font: 12px sans-serif;		
+                background: lightsteelblue;	
+                border: 0px;		
+                border-radius: 8px;			
+                pointer-events: none;			
+            }
+
         
-        .focus circle {
-        fill: none;
-        stroke: steelblue;
-        }
-			
 		</style>
 	</head>
-	<body>
+	<body classname = 'LineGraph'> 
+        <!-- <div id="tooltip"> 
+            <p> <span class="orangeDot"></span><strong>&nbsp White</strong></p>
+            <p> <span class="blueDot"></span><strong>&nbsp Black</strong></p>
+        </div> -->
+
 		<script type="text/javascript">
 
-			
-            var margin = {top: 50, right: 50, bottom: 50, left: 50}
-            , width = window.innerWidth - margin.left - margin.right  
-            , height = window.innerHeight - margin.top - margin.bottom; 
 
-           
-            var n = 21;
 
-         
-            var xScale = d3.scaleLinear()
-                .domain([0, n-1]) // input
-                .range([0, width]); // output
+            d3.csv("../data/policekillings.csv")
+			.then(function(csv) {
+                
 
-           
-            var yScale = d3.scaleLinear()
-                .domain([0, 1]) // input 
-                .range([height, 0]); // output 
+				var data_obj = Array.from(csv, x => ({ race: x["Victim's race"],
+														year: x["Date of Incident (month/day/year)"].slice(-4)
+				}));
+                
+                
+				var years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021];
 
-        
-            var line = d3.line()
-                .x(function(d, i) { return xScale(i); }) 
-                .y(function(d) { return yScale(d.y); }) 
-                .curve(d3.curveMonotoneX) 
+                var totalB = []
+                var totalW = []
 
-           
-            var dataset = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() } })
-
-         
-            var svg = d3.select("body").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-           
-            svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(xScale)); 
+                for(year in years){
+                    var b = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "Black"); }).length;
+                    totalB.push(b);
+                    var w = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "White"); }).length;
+                    totalW.push(w);
+                }
 
             
-            svg.append("g")
-                .attr("class", "y axis")
-                .call(d3.axisLeft(yScale)); 
+                var line = d3.line()
+                    .x(function(d, i) { return xScale(i); }) 
+                    .y(function(d) { return yScale(d.y); }) 
+                    .curve(d3.curveMonotoneX) 
 
-            //Append the path, bind the data, and call the line generator 
-            svg.append("path")
-                .datum(dataset) 
-                .attr("class", "line") 
-                .attr("d", line);  
+                var datasetB = totalB.map(function(d) { return {"y": d } })
+                var datasetW = totalW.map(function(d) { return {"y": d } })
+                
 
-            // Appends a circle for each datapoint 
-            svg.selectAll(".dot")
-                .data(dataset)
-            .enter().append("circle") 
-                .attr("class", "dot") 
-                .attr("cx", function(d, i) { return xScale(i) })
-                .attr("cy", function(d) { return yScale(d.y) })
-                .attr("r", 5)
+                var margin = {top: 50, right: 50, bottom: 50, left: 50}
+                , width = window.innerWidth - margin.left - margin.right  
+                , height = window.innerHeight - margin.top - margin.bottom; 
+
+                var xScale = d3.scaleLinear()
+                    .domain([d3.min(years), d3.max(years)])
+                    .range([0,width/2]);
+
+                var yScale = d3.scaleLinear()
+                    .domain([0, 600]) // input 
+                    .range([height, 0]); // output 
+
+            
+                var line = d3.line()
+                    .x(function(d, i) { return xScale(i + 2013); }) 
+                    .y(function(d) { return yScale(d.y); }) 
+                    .curve(d3.curveMonotoneX) 
+
+                var div = d3.select("body").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity",0)
+
+            
+                var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                
+                svg.append("g")
+                    .attr("class", "xAxis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(xScale));
+
+                svg.append("text")
+                    .attr("transform", "rotate(0)")
+                    .attr("y", 520)
+                    .attr("x",width/2 + 53)
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style('fill', 'white')
+                    .text("Year"); 
+       
+                svg.append("g")
+                    .attr("class", "yAxis")
+                    .call(d3.axisLeft(yScale)); 
+
+                svg.append("text")
+                    .attr("transform", "rotate(0)")
+                    .attr("y", 0 - margin.left)
+                    .attr("x",0)
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style('fill', 'white')
+                    .text("Death"); 
+
+                //Orange line part
+                svg.append("path")
+                    .datum(datasetB) 
+                    .attr("class", "orangeLine") 
+                    .attr("d", line)
+
+                svg.selectAll(".dot")
+                    .data(datasetB)
+                    .enter()
+                    .append("circle") 
+                    .attr("class", "orangeDot") 
+                    .attr("cx", function(d, i) { return xScale(i+2013) })
+                    .attr("cy", function(d) { return yScale(d.y) })
+                    .attr("r", 5)
+                    .on("mouseover", function(even, i){
+                        d3.select(this)
+                            .attr("stroke-width", 5)
+                        div.transition()		
+                            .duration(200)		
+                            .style("opacity", 0.9);
+                        
+                        div.html(even.y)	  
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");	
+                    })
+                    .on("mouseout", function(even, i){
+                        d3.select(this)
+						    .attr("stroke-width", 1);
+                        div.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);	
+                    })
+                   
+                   
+
+                 //blue line part
+                 svg.append("path")
+                    .datum(datasetW) 
+                    .attr("class", "blueLine") 
+                    .attr("d", line)
+
+                
+                svg.selectAll(".dot")
+                    .data(datasetW)
+                    .enter()
+                    .append("circle") 
+                    .attr("class", "blueDot") 
+                    .attr("cx", function(d, i) { return xScale(i+2013) })
+                    .attr("cy", function(d) { return yScale(d.y) })
+                    .attr("r", 5)
+                    .on("mouseover", function(even, i){
+                        d3.select(this)
+                            .attr("stroke-width", 5);
+                        div.transition()		
+                            .duration(200)		
+                            .style("opacity", 0.9);
+                        
+                        div.html(even.y)	  
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");	
+                    })
+                    .on("mouseout", function(even, i){
+                        d3.select(this)
+						.attr("stroke-width", 1);
+                        div.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);	
+                    })
+
+        
+
+
+			});
+           
+
+
+         
+
+
 				
-						
-						
+										
 		</script>
 	</body>
 </html>
