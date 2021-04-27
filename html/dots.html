@@ -188,10 +188,11 @@
 					else return d.count/18;
 				})
 				.style("fill", function(d, i) {
-					return "red";
+					return "#FD8028";
 				}).style("opacity", 0.3);
 			
 			//Create nodes as circles
+			var color2 = ["#7A474C", "#AB3C4B", "#EE1646", "#F84862", "#FF7383", "#FFA3AE", "#FFDAE0"]
 			var id = 0
 			var nodes2 = svg.selectAll("circle2")
 				.data(dataset.nodes2)
@@ -210,7 +211,7 @@
 					else return d.count/2
 				})
 				.style("fill", function(d, i) {
-					return colors(i);
+					return color2[i];
 				});
 
 			var nodes3 = svg.selectAll("circle3")
@@ -229,7 +230,7 @@
 				})
 				.style("fill", function(d, i) {
 					// console.log(d);
-					return "blue";
+					return "#208CCA";
 				}).style("opacity", 0.3);;
 
 			//Add a simple tooltip
@@ -296,7 +297,7 @@
 					// console.log(d[item])
 					if (c[a].innerHTML.includes(d[item].name)) {
 						if (c[a].style.opacity === "1")
-							c[a].style.opacity = "0.5";
+							c[a].style.opacity = "0.3";
 						else
 							c[a].style.opacity = "1";
 					}
@@ -317,13 +318,14 @@
 				]
 			// console.log(dataset2.filter(i => i.name === "White")[0].con)
 				//Unknown Race
+				"#7A474C", "#AB3C4B", "#EE1646", "#F84862", "#FF7383", "#FFA3AE", "#FFDAE0"
 				const unknown = dataset2.filter(i => i.name === "Unknown Race")[0].con
 				var svgLinks = svg.selectAll('line.link')
 									.data(unknown)
 									.enter()
 									.append('svg:line')
 									.attr("class", "link")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#7A474C")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -353,7 +355,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link2")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#AB3C4B")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -386,7 +388,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link3")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#EE1646")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -417,7 +419,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link4")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#F84862")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -448,7 +450,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link5")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#FF7383")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -479,7 +481,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link6")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#FFA3AE")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -510,7 +512,7 @@
 									.enter()
 									.append('svg:line')
 									.attr("class", "link7")
-									.attr("style","stroke:black")
+									.attr("style","stroke:#FFDAE0")
 									.style("display", "none")
 									.attr("x1", function(d) { 
 										// console.log(d.x)
@@ -548,5 +550,6 @@
 	
 
 	</script>
+	<div img></div>
 	</body>
 </html>
