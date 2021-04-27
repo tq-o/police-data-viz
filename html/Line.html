@@ -68,7 +68,7 @@
 				line-height: 20px;
 			} */
 
-            div.tooltip {	
+            div.tooltipLine {	
                 position: absolute;			
                 text-align: center;			
                 width: 30px;					
@@ -76,6 +76,7 @@
                 padding: 2px;				
                 font: 12px sans-serif;		
                 background: lightsteelblue;	
+                color: black;
                 border: 0px;		
                 border-radius: 8px;			
                 pointer-events: none;			
@@ -115,27 +116,30 @@
                     totalW.push(w);
                 }
 
-            
-                var line = d3.line()
-                    .x(function(d, i) { return xScale(i); }) 
-                    .y(function(d) { return yScale(d.y); }) 
-                    .curve(d3.curveMonotoneX) 
 
                 var datasetB = totalB.map(function(d) { return {"y": d } })
                 var datasetW = totalW.map(function(d) { return {"y": d } })
                 
 
                 var margin = {top: 50, right: 50, bottom: 50, left: 50}
-                , width = window.innerWidth - margin.left - margin.right  
-                , height = window.innerHeight - margin.top - margin.bottom; 
+                // , width = window.innerWidth - margin.left - margin.right  
+                // , height = window.innerHeight - margin.top - margin.bottom; 
+                , width = 1000 - margin.left - margin.right  
+                , height = 500 - margin.top - margin.bottom; 
+
 
                 var xScale = d3.scaleLinear()
                     .domain([d3.min(years), d3.max(years)])
-                    .range([0,width/2]);
+                    .range([0,width]);
 
                 var yScale = d3.scaleLinear()
                     .domain([0, 600]) // input 
-                    .range([height, 0]); // output 
+                    .range([height, 0]); // output
+
+                var line = d3.line()
+                    .x(function(d, i) { return xScale(i); }) 
+                    .y(function(d) { return yScale(d.y); }) 
+                    .curve(d3.curveMonotoneX) 
 
             
                 var line = d3.line()
@@ -144,11 +148,11 @@
                     .curve(d3.curveMonotoneX) 
 
                 var div = d3.select("body").append("div")
-                        .attr("class", "tooltip")
+                        .attr("class", "tooltipLine")
                         .style("opacity",0)
 
             
-                var svg = d3.select("body")
+                var svgLine = d3.select("body")
                     .append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
@@ -156,12 +160,12 @@
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
                 
-                svg.append("g")
+                svgLine.append("g")
                     .attr("class", "xAxis")
                     .attr("transform", "translate(0," + height + ")")
                     .call(d3.axisBottom(xScale));
 
-                svg.append("text")
+                svgLine.append("text")
                     .attr("transform", "rotate(0)")
                     .attr("y", 520)
                     .attr("x",width/2 + 53)
@@ -170,11 +174,11 @@
                     .style('fill', 'white')
                     .text("Year"); 
        
-                svg.append("g")
+                svgLine.append("g")
                     .attr("class", "yAxis")
                     .call(d3.axisLeft(yScale)); 
 
-                svg.append("text")
+                svgLine.append("text")
                     .attr("transform", "rotate(0)")
                     .attr("y", 0 - margin.left)
                     .attr("x",0)
@@ -184,12 +188,12 @@
                     .text("Death"); 
 
                 //Orange line part
-                svg.append("path")
+                svgLine.append("path")
                     .datum(datasetB) 
                     .attr("class", "orangeLine") 
                     .attr("d", line)
 
-                svg.selectAll(".dot")
+                svgLine.selectAll(".dot")
                     .data(datasetB)
                     .enter()
                     .append("circle") 
@@ -219,13 +223,13 @@
                    
 
                  //blue line part
-                 svg.append("path")
+                svgLine.append("path")
                     .datum(datasetW) 
                     .attr("class", "blueLine") 
                     .attr("d", line)
 
                 
-                svg.selectAll(".dot")
+                svgLine.selectAll(".dot")
                     .data(datasetW)
                     .enter()
                     .append("circle") 
