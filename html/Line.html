@@ -82,11 +82,25 @@
                 pointer-events: none;			
             }
 
+            div.tooltipDot {	
+                position: absolute;			
+                text-align: center;			
+                width: 100px;
+				height: auto;
+				padding: 10px;
+                color: black;
+				background-color: white;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				pointer-events: none;
+            }
+
         
 		</style>
 	</head>
 	<body classname = 'LineGraph'> 
-        <!-- <div id="tooltip"> 
+        <!-- <div id = "dot" classname = "tooltipDots"> 
             <p> <span class="orangeDot"></span><strong>&nbsp White</strong></p>
             <p> <span class="blueDot"></span><strong>&nbsp Black</strong></p>
         </div> -->
@@ -120,6 +134,8 @@
                 var datasetB = totalB.map(function(d) { return {"y": d } })
                 var datasetW = totalW.map(function(d) { return {"y": d } })
                 
+                console.log(datasetB)
+                console.log(datasetW)
 
                 var margin = {top: 50, right: 50, bottom: 50, left: 50}
                 // , width = window.innerWidth - margin.left - margin.right  
@@ -147,9 +163,13 @@
                     .y(function(d) { return yScale(d.y); }) 
                     .curve(d3.curveMonotoneX) 
 
-                var div = d3.select("body").append("div")
+                var divLine = d3.select("body").append("div")
                         .attr("class", "tooltipLine")
                         .style("opacity",0)
+
+                var divDot = d3.select("body").append("div")
+                        .attr("class", "tooltipDot")
+                        .style("opacity",1)
 
             
                 var svgLine = d3.select("body")
@@ -158,7 +178,12 @@
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    // .append("div");
 
+                divDot.html("<div id = dot classname = tooltipDots> <p> <span class=orangeDot></span><strong>&nbsp Black</strong></p><p> <span class=blueDot></span><strong>&nbsp White</strong></p></div>")
+                    .style("left", "70%");
+                    // .style("top", "100%");
+             
                 
                 svgLine.append("g")
                     .attr("class", "xAxis")
@@ -201,21 +226,21 @@
                     .attr("cx", function(d, i) { return xScale(i+2013) })
                     .attr("cy", function(d) { return yScale(d.y) })
                     .attr("r", 5)
-                    .on("mouseover", function(even, i){
+                    .on("mouseover", function(even, d){
                         d3.select(this)
                             .attr("stroke-width", 5)
-                        div.transition()		
+                        divLine.transition()		
                             .duration(200)		
                             .style("opacity", 0.9);
                         
-                        div.html(even.y)	  
+                        divLine.html(d.y)	  
                             .style("left", (event.pageX) + "px")
                             .style("top", (event.pageY - 28) + "px");	
                     })
                     .on("mouseout", function(even, i){
                         d3.select(this)
 						    .attr("stroke-width", 1);
-                        div.transition()		
+                        divLine.transition()		
                             .duration(500)		
                             .style("opacity", 0);	
                     })
@@ -237,21 +262,21 @@
                     .attr("cx", function(d, i) { return xScale(i+2013) })
                     .attr("cy", function(d) { return yScale(d.y) })
                     .attr("r", 5)
-                    .on("mouseover", function(even, i){
+                    .on("mouseover", function(even, d){
                         d3.select(this)
                             .attr("stroke-width", 5);
-                        div.transition()		
+                        divLine.transition()		
                             .duration(200)		
                             .style("opacity", 0.9);
-                        
-                        div.html(even.y)	  
+                        	  
+                        divLine.html(d.y)
                             .style("left", (event.pageX) + "px")
                             .style("top", (event.pageY - 28) + "px");	
                     })
                     .on("mouseout", function(even, i){
                         d3.select(this)
 						.attr("stroke-width", 1);
-                        div.transition()		
+                        divLine.transition()		
                             .duration(500)		
                             .style("opacity", 0);	
                     })
