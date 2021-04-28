@@ -157,13 +157,13 @@
 							.append("div")
 							.attr("class", "tooltipBarBG")
 							.style("opacity", 0);
-							
+								
 		bar_div.append("h1");
 							
 		var divBarDot = bar_div.append("div")
 				.attr("class", "tooltipDot");
 				
-		divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total Police Killings in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Police Killings in Black Population 2013~2021</strong></p></div>")
+		divBarDot.html("<div classname = tooltipColor> <p> <strong> Top 10 city with black people killed</strong></p> <p> <span class=orangeDot></span><strong>&nbsp Total Police Killings in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Police Killings in Black Population 2013~2021</strong></p></div>")
 			.style("left", "70%");
 			
 		var bar_svg2 = bar_div.append("svg").attr("width", 380).attr("height", 450).style("background-color", "white").attr("transform", "translate(1, 0)");
