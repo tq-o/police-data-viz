@@ -128,14 +128,16 @@
                     city.push(state_obj[state][i].city)
                 }
                 
+                var num = 430;
+                var num2 = 20;
 
 
-                d3.select("body").append("svg").attr("width", 550).attr("height", 600)
+                d3.select("body").append("svg").attr("width", 480).attr("height", 550)
 
-                var xScale = d3.scaleLinear().domain([0,10]).range([20,480])
+                var xScale = d3.scaleLinear().domain([0,10]).range([num2,num])
 
-                var yScale = d3.scaleLinear().domain([0,range3]).range([480,20])
-                var heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480])
+                var yScale = d3.scaleLinear().domain([0,range3]).range([num,num2])
+                var heightScale = d3.scaleLinear().domain([0,range3]).range([num2, num])
 
                 var kill = ["bKill", "allKill"]
                 var colorScale = d3.scaleOrdinal().domain(kill).range(["#00e1ff", "#ffab00"])
@@ -146,7 +148,7 @@
                 d3.select("svg").append("g")
                     .attr("class", "yAxis")
                     .call(yAxis)
-                    .attr("transform",`translate(${20}, 0)`)
+                    .attr("transform",`translate(${num2}, 0)`)
                 
                 xAxis = d3.axisBottom()
                     .scale(xScale)
@@ -161,7 +163,7 @@
                 d3.select("svg").append("g")
                     .attr("class", "xAxis")
                     .call(xAxis)
-                    .attr("transform",`translate(0, ${480})`)
+                    .attr("transform",`translate(0, ${num})`)
 
                     .selectAll("text")  
                     .style("text-anchor", "end")
@@ -184,7 +186,7 @@
                     .data(d)
                     .enter()
                     .append("rect")
-                    .attr("width", 40)
+                    .attr("width", 30) //40
                     .attr("height", p => heightScale(p[1]) - heightScale(p[0]))
                     .attr("x", (p, i) => xScale(i) + 25)
                     .attr("y", p => yScale(p[1]))
