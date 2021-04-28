@@ -11,31 +11,40 @@
 			/* No style rules here yet */		
 		</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>	
-    <script>
-      $(function(){
-        $("#Header").load("html/Header.html"); 
-	    	$("#Map").load("html/US_map.html");
-        $("#Line").load("html/Line.html");
-      });
-		</script> 
 	</head>
 	<body>
-    <div id = "Header"></div>
+		<header class="header-body">
+			<center>
+			<div class = "h1">
+				Title 
+			</div>
+			<div class = "nav" transform="translate(0, -100)">
+				<option>
+					<input type="button" onclick="swapPage('US_map')" value="US Map"></button>
+					<input type="button" onclick="swapPage('dots')" value="Connections"></button>
+					<input type="button" onclick="swapPage('slider_vis')" value="Population"></button>
+					<input type="button" onclick="swapPage('line')" value="Black and White"></button>
+				</option>
+			</div>
+			</center>
+		</header>
+		
 
-    <div id = "Map"></div>
-    <div id = "Line"></div>
+	
+	
+	
+	<div>Introduction</div>
 
-    <div>
-      graph 2 stuff
-    </div>
-
-    <div>
-      graph 3 stuff
-    </div>
-
-    <div>
-      graph 4 stuff
-    </div>
+	<div class="page_container">
+		<script>
+			function swapPage(page) {
+				$("#Page").attr("src", "html/"+page+".html");
+			};
+		</script> 
+		<iframe id="Page" src="" width="100%" height="900px" frameBorder="0"></div>
+	</div>
+	
+	<div>Description</div>
 
 
 	</body>
