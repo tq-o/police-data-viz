@@ -207,6 +207,7 @@
 					return color2[i];
 				});
 
+
 			var nodes3 = svg.selectAll("circle3")
 				.data(dataset.nodes3)
 				.enter()
@@ -261,6 +262,32 @@
 					d.y = h/2;
 					return d.y; 
 				});
+
+			svg.selectAll("text")
+			   .data(dataset.nodes2)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.name;
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return padding + (w-w/10)*i/7;
+			   })
+			   .attr("y", function(d) {
+				    var o = 0;
+					if (d.count>1000)
+						o = d.count/30;
+					else if (d.count<100)
+						o = d.count/1.2;
+					else o = d.count/2
+			   		return - o + h/2 - 20;
+			   })
+			//    .attr("font-family", "sans-serif")
+			   .attr("font-size", "20px")
+			   .attr("fill", "white");
+
+
 			nodes3.attr("cx", function(d, i) { 
 					d.x = padding + (w-w/2)*i/6;
 					return d.x; })
@@ -268,47 +295,58 @@
 					d.y = h/1.3;
 					return d.y; });
 
-			console.log(dataset.nodes2.filter(i => i.name === "White")[0].x)
+			// console.log(dataset.nodes2.filter(i => i.name === "White")[0].x)
 			var dataset2 = []
 			var click = ""
+			var storage = {"link": 0, "link2": 0, "link3": 0, "link4": 0, "link5": 0, "link6": 0, "link7": 0}
 			myFunction = (e, d) =>{
-				console.log(click)
-				console.log(e)
+				var keys = Object.keys(storage)
+				// console.log(e)
 				//  document.getElementById("lines2");
 				// d = {name: "Domestic Violence", count: 5};
-				var x = document.getElementsByClassName(e);
+				if (storage[e] === 0) {
+					storage[e] = 1
+				}
+				else storage[e] = 0
+				// console.log(storage[e])
+				for (var k in keys) {
+				var x = document.getElementsByClassName(keys[k]);
+					if(keys[k] !== e) {
+						storage[keys[k]] = 0
+					}
+				// console.log(keys[k] + " " + storage[keys[k]])
 				for (var y = 0; y < x.length; y++) {
 					// console.log(y)
-					if (x[y].style.display === "none") {
+					if (storage[keys[k]] === 1) {
 						x[y].style.display = "block";
 					} else {
 						x[y].style.display = "none";
 					}}
-				if (e !== click && click!=="") {
-					console.log("In")
-					var c1 = d3.selectAll("circle")._groups[0];
-					for (var a = 0; a < c1.length; a++){
-					// .textContent
-						console.log(item)
-						if (a < 10 || a > 16) {
-							c1[a].style.opacity = "0.3";
-						}
-					
-					}
 				}
 				var c = d3.selectAll("circle")._groups[0];
-				console.log(c)
 				for (var a = 0; a < c.length; a++){
 				// .textContent
-				 for (var item in d){
-					// console.log(d[item])
-					if (c[a].innerHTML.includes(d[item].name)) {
-						if (c[a].style.opacity === "1")
-							c[a].style.opacity = "0.3";
-						else
-							c[a].style.opacity = "1";
+					if (a < 10 || a > 16) {
+						// console.log(c[a])
+						c[a].style.opacity = "0.3";
+		
 					}
-				 }
+						
+				}
+				
+				console.log(c)
+				if (storage[e] === 1){
+					for (var a = 0; a < c.length; a++){
+					// .textContent
+						for (var item in d){
+							if (c[a].innerHTML.includes(d[item].name)) {
+								if (c[a].style.opacity === "1")
+									c[a].style.opacity = "0.3";
+								else
+									c[a].style.opacity = "1";
+							}
+						}
+					}
 				}
 				click = e;
 			}
