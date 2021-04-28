@@ -143,7 +143,6 @@
 														.enter()
 														.append("path")
 														.attr("d", d3.symbol().type(d3.symbolTriangle).size(300*2/5*1.5))
-														.attr("fill", "#ff800e")
 														.attr("transform", function(d) {
 															var x = ((d-1) % 5)*32;
 															//x += 420;
@@ -152,6 +151,9 @@
 															y += 50;
 															return "translate("+x+", "+y+")";
 														})
+														.style("fill", "#ff800e")
+														.transition()
+                                                        .duration(500)
 														.attr("opacity", function(d) {
 															if (d == 0) { return 0; }
 															else { return 1; }
@@ -168,6 +170,8 @@
 															 return parseInt((d-1) / 5)*20 + 47.5;
 														 })
 														 .attr("fill", "#006ba4")
+														 .transition()
+                                                         .duration(1000)
 														 .attr("opacity", function(d) {
 															if (d == 0) { return 0; }
 															else { return 1; }
@@ -191,6 +195,9 @@
 															y += 50;
 															return "translate("+x+", "+y+")";
 														})
+														.transition()
+                                                        .duration(1000)
+														
 														.attr("opacity", function(d) {
 															if (d == 0) { return 0; }
 															else { return 1; }
@@ -207,6 +214,8 @@
 															 return parseInt((d-1) / 5)*20 + 47.5;
 														 })
 														 .attr("fill", "#006ba4")
+														 .transition()
+                                                         .duration(500)
 														 .attr("opacity", function(d) {
 															if (d == 0) { return 0; }
 															else { return 1; }
