@@ -4,10 +4,11 @@
 
 <!DOCTYPE html>
 <html lang="en">
+    
     <head>
+        
 
         <title>Audience Comparison</title>
-
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,20 +24,6 @@
                     font-weight: 700;
                     font-size : 14px;
                     margin: 2% 2% 2% 2%;    
-                }
-
-               .venntooltip {
-                    font-size : 14px;
-                    position: absolute;
-                    text-align: center;
-                    width: 128px;
-                    height: 85px;
-                    background: #333;
-                    color: #fff;
-                    padding: 2px;  
-                    border: 0px;
-                    border-radius: 8px;
-                    opacity: 0;
                 }
 
 
@@ -70,17 +57,20 @@
 
 
             var chart = venn.VennDiagram()
-                .width(500)
+                .width(1000)
                 .height(400)
 
 
             var div = d3.select("#venn_one").datum(sets).call(chart);
-                div.selectAll("text").style("fill", "white");
+                div.selectAll("text")
+                        .style("fill", "white")
+                        .style("font-size", "13px");
                 div.selectAll(".venn-circle path")
                         .style("fill-opacity", .8)
                         .style("stroke-width", 1)
                         .style("stroke-opacity", 1)
                         .style("stroke", "fff");
+                        
 
             var tooltip = d3.select("#venn_one").append("div")
                 .attr("class", "venntooltip");
@@ -99,12 +89,12 @@
                         .style("stroke", "black");
             d3.select("svg").append('text')
                         // .attr("x1", x)
-                        .attr("x", x-15)
+                        .attr("x", x-65)
                         // .attr("y1", y)
                         .attr("y", y-152)
                         .text("Black people killed: " + b.bkill)
-                        .attr("font-size", "13px")
-                        .attr("fill", "blue")
+                        .attr("font-size", "15px")
+                        .attr("fill", "white")
 
                 })
         </script>

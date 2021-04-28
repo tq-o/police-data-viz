@@ -165,7 +165,7 @@
 		divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total Deaths in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Deaths in Black Population 2013~2021</strong></p></div>")
 			.style("left", "70%");
 			
-		var bar_svg2 = bar_div.append("svg").attr("width", 540).attr("height", 600).style("background-color", "white").attr("transform", "translate(5, 0)");
+		var bar_svg2 = bar_div.append("svg").attr("width", 380).attr("height", 450).style("background-color", "white").attr("transform", "translate(1, 0)");
 
 						
 		// MAP SVG INITIALIZATION
@@ -713,11 +713,14 @@
 											for (var i in state_obj[state]){
 												city.push(state_obj[state][i].city);
 											}
-											
-											xScale = d3.scaleLinear().domain([0,10]).range([20,480]);
 
-											yScale = d3.scaleLinear().domain([0,range3]).range([480,20]);
-											heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480]);
+											var num = 350;
+                                            var num2 = 20;
+											
+											xScale = d3.scaleLinear().domain([0,10]).range([num2,num]);
+
+											yScale = d3.scaleLinear().domain([0,range3]).range([num,num2]);
+											heightScale = d3.scaleLinear().domain([0,range3]).range([num2, num]);
 											
 											yAxis_bar = d3.axisLeft().scale(yScale)
 													.tickSize(-500);
@@ -725,7 +728,8 @@
 											yax_g.transition()
 												.duration(1)
 												.call(yAxis_bar)
-												.attr("transform", "translate(20, 0)");
+												.attr("transform",`translate(${num2}, 0)`);
+												// .attr("transform", "translate(20, 0)");
 											
 											xAxis_bar = d3.axisBottom()
 												.scale(xScale)
@@ -743,7 +747,8 @@
 											var xax_g = bar_svg2.append("g")
 												.attr("class", "xAxis")
 												.call(xAxis_bar)
-												.attr("transform", "translate(0, 480)")
+												.attr("transform",`translate(0, ${num})`)
+												// .attr("transform", "translate(0, 480)")
 												.selectAll("text")
 												.style("text-anchor", "end")
 												.attr("dx", "-.8em")
@@ -760,7 +765,7 @@
 															.data(function(d) { return d; })
 															.enter()
 															.append("rect")
-															.attr("width", 40)
+															.attr("width", 20)
 															.attr("height", p => heightScale(p[1]) - heightScale(p[0]))
 															.attr("x", (p, i) => xScale(i) + 25)
 															.attr("y", p => yScale(p[1]));
