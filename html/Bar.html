@@ -7,6 +7,53 @@
         
 		<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
 		<style type="text/css">    
+            div.tooltipBar {	
+                position: absolute;			
+                text-align: center;			
+                width: 30px;					
+                height: 14px;					
+                padding: 2px;				
+                font: 12px sans-serif;		
+                background: lightsteelblue;	
+                color: black;
+                border: 0px;		
+                border-radius: 8px;			
+                pointer-events: none;			
+            }
+
+            div.tooltipColor {	
+                position: absolute;			
+                text-align: center;			
+                width: 100px;
+                height: auto;
+                padding: 10px;
+                color: black;
+                background-color: white;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+                pointer-events: none;
+            }
+
+            .orangeDot {
+                fill: #ffab00;
+                stroke: #fff;
+                height: 10px;
+                width: 10px;
+                background-color: #ffab00;
+                /* border-radius: 50%; */
+                display: inline-block;
+            }
+
+            .blueDot {
+                fill: #00e1ff;
+                stroke: #fff;
+                height: 10px;
+                width: 10px;
+                background-color: #00e1ff;
+                /* border-radius: 50%; */
+                display: inline-block;
+            }
 		</style>
 	</head>
 	<body classname = 'LineGraph'> 
@@ -16,7 +63,17 @@
 
             d3.csv("../data/policekillings.csv")
 			.then(function(csv) {
-                
+
+                var divBar = d3.select("body").append("div")
+                        .attr("class", "tooltipBar")
+                        .style("opacity",0)
+
+                var divBarDot = d3.select("body").append("div")
+                        .attr("class", "tooltipDot")
+                        .style("opacity",1)
+
+                divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total death 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total black death 2013~2021</strong></p></div>")
+                    .style("left", "70%");
 
 				var data_obj = Array.from(csv, x => ({ race: x["Victim's race"],
                                                         city: x["City"],
@@ -25,26 +82,25 @@
                 
 
                 var state_obj = {}
-                var state_obj2 = {}
                 data_obj.forEach((i) => {
                     
                     if (!state_obj[i.state]){
-                        var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city); }).length;
-                        var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city); }).length;
+                        var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
+                        var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
                         state_obj[i.state] = [{city: i.city, bKill: bTotal, allKill: aTotal}]
                     }
                     else {
                         if (state_obj[i.state].filter(a => a.city === i.city).length === 0){
-                            var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city); }).length;
-                            var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city); }).length;
+                            var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
+                            var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
                             state_obj[i.state].push({city: i.city, bKill: bTotal, allKill: aTotal - bTotal})
                         }
                     }
                     
                 });
 
-                state_obj2 = state_obj;
-                
+      
+                var state = "GA"
 
 
                 for (var i in state_obj) {
@@ -53,44 +109,36 @@
                     });
                     state_obj[i] = state_obj[i].slice(0,10)
                 }
-
+      
+                var range = state_obj[state][0].bKill
                 
-                for (var i in state_obj2) {
+                for (var i in state_obj) {
                     state_obj[i].sort((a, b) => {
                         return b.allKill - a.allKill;
                     });
-                    state_obj2[i] = state_obj2[i].slice(0,10)
+                    state_obj[i] = state_obj[i].slice(0,10)
                 }
+                var range2 = state_obj[state][0].allKill
+            
 
-                // console.log(state_obj["MA"])
-                var range = state_obj2["MA"][0].allKill
-                var range2 = state_obj2["MA"][0].bKill
                 var range3 = range + range2
                 var city = []
 
-                for (var i in state_obj["MA"]){
-                    city.push(state_obj2["MA"][i].city)
+                for (var i in state_obj[state]){
+                    city.push(state_obj[state][i].city)
                 }
-                console.log(city)
                 
 
 
-
-
-
-
-
-
-                d3.select("body").append("svg").attr("width", 550).attr("height", 500)
+                d3.select("body").append("svg").attr("width", 550).attr("height", 600)
 
                 var xScale = d3.scaleLinear().domain([0,10]).range([20,480])
-                // var xScale = d3.scaleLinear().domain(city).range([20,480])
 
-                var yScale = d3.scaleLinear().domain([0,range3 ]).range([480,20])
+                var yScale = d3.scaleLinear().domain([0,range3]).range([480,20])
                 var heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480])
 
                 var kill = ["bKill", "allKill"]
-                var colorScale = d3.scaleOrdinal().domain(kill).range(["#fcd88a", "#cf7c1c"])
+                var colorScale = d3.scaleOrdinal().domain(kill).range(["#00e1ff", "#ffab00"])
 
                 yAxis = d3.axisLeft().scale(yScale)
                         .tickSize(-500)
@@ -103,8 +151,9 @@
                 xAxis = d3.axisBottom()
                     .scale(xScale)
                     .tickFormat(function(d, i) { 
+                        // return city[i]; 
                         if (i!== 0) 
-                            return city[i]; 
+                            return city[i-1]; 
                         else return "";
                     })
                     .tickSize(-500)   
@@ -114,15 +163,18 @@
                     .call(xAxis)
                     .attr("transform",`translate(0, ${480})`)
 
-                // d3.select("g.xAxis").selectAll("g.tick").selectAll("text")
+                    .selectAll("text")  
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", "rotate(-65)" );
 
-                // d3.select("g.xAxis").selectAll("g.tick").selectAll("line")
-
+              
                 var stackLayout = d3.stack()
                     .keys(kill)
                 
                 d3.select("svg").selectAll("g.bar")
-                    .data(stackLayout(state_obj["MA"])) // Pass the sorted data in
+                    .data(stackLayout(state_obj[state])) // Pass the sorted data in
                     .enter()
                     .append("g")
                     .attr("class", "bar")
@@ -136,6 +188,30 @@
                     .attr("x", (p, i) => xScale(i) + 25)
                     .attr("y", p => yScale(p[1]))
                     .style("fill", colorScale(d.key))
+
+                    .on("mouseover", function(even, d){
+                        d3.select(this)
+                            .attr("stroke-width", 5);
+                        divBar.transition()		
+                            .duration(200)		
+                            .style("opacity", 0.9);	
+                    })
+                    .on("mouseout", function(even, i){
+                     
+                        divBar.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);	
+                    })
+                    .on("mousemove", function(even, d){
+                        console.log(d)
+                        divBar.html(d[1])
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+
+
+                    })
+
+                    
                 })
 
             });
