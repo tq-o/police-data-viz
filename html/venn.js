@@ -1413,11 +1413,10 @@
                 .filter(function (d) { return d.sets in textCentres; })
                 .text(function (d) { return label(d); } )
                 .attr("x", function(d) { 
-                    x_re = Math.floor(textCentres[d.sets].x); console.log(x_re); return x_re;
+                    x_re = Math.floor(textCentres[d.sets].x); return x_re;
                 })
                 .attr("y", function(d) { 
                     y_re = Math.floor(textCentres[d.sets].y); 
-                    console.log(y_re); 
                     return y_re;
                 });
 
