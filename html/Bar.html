@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <link rel="stylesheet" href="../css/US_map.css" />
+		<meta charset="utf-8">
+		<title>D3: Stack layout stacked bar chart</title>
+        
+		<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+		<style type="text/css">    
+		</style>
+	</head>
+	<body classname = 'LineGraph'> 
+		<script type="text/javascript">
+
+
+
+            d3.csv("../data/policekillings.csv")
+			.then(function(csv) {
+                
+
+				var data_obj = Array.from(csv, x => ({ race: x["Victim's race"],
+                                                        city: x["City"],
+                                                        state: x["State"],
+														year: x["Date of Incident (month/day/year)"].slice(-4)
+				}));
+                
+                
+				var years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021];
+
+                var victimInfo = []
+                // var state = "TX"
+
+                // for(year in years){
+                //     var b = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "Black"); }).length;
+                //     totalB.push(b);
+                //     var w = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "White"); }).length;
+                //     totalW.push(w);
+                // }
+                
+                var b = data_obj.filter(function(d, i) { return ( d.race === "Black" && d.state === state); });
+                victimInfo = victimInfo.concat(b);
+
+                var state = data_obj.filter(function(d,i){return ( d.race === "Black" && d.state);});
+                console.log(state);
+
+                // console.log(victimInfo)
+
+                
+                    
+                
+
+
+
+
+
+			});
+           
+
+
+         
+
+
+				
+										
+		</script>
+	</body>
+</html>
