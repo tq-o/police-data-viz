@@ -24,42 +24,152 @@
 														year: x["Date of Incident (month/day/year)"].slice(-4)
 				}));
                 
-                
-				var years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021];
 
-                var victimInfo = []
-                // var state = "TX"
-
-                // for(year in years){
-                //     var b = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "Black"); }).length;
-                //     totalB.push(b);
-                //     var w = data_obj.filter(function(d, i) { return (parseInt(d.year) == years[year] && d.race == "White"); }).length;
-                //     totalW.push(w);
-                // }
-                
-                var b = data_obj.filter(function(d, i) { return ( d.race === "Black" && d.state === state); });
-                victimInfo = victimInfo.concat(b);
-
-                var state = data_obj.filter(function(d,i){return ( d.race === "Black" && d.state);});
-                console.log(state);
-
-                // console.log(victimInfo)
-
-                
+                var state_obj = {}
+                data_obj.forEach((i) => {
                     
+                    if (!state_obj[i.state]){
+                        var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city); }).length;
+                        var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city); }).length;
+                        state_obj[i.state] = [{city: i.city, blackkill: bTotal, allKill: aTotal}]
+                    }
+                    else {
+                        if (state_obj[i.state].filter(a => a.city === i.city).length === 0){
+                            var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city); }).length;
+                            var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city); }).length;
+                            state_obj[i.state].push({city: i.city, bKill: bTotal, allKill: aTotal})
+                        }
+                    }
+                    
+                });
+
+
+                for (var i in state_obj) {
+                    state_obj[i].sort((a, b) => {
+                        return b.bKill - a.bKill;
+                    });
+                    console.log(typeof(state_obj[i]))
+
+                    // console.log(state_obj[i].slice(0,10))
+                    state_obj[i] = state_obj[i].slice(0,10)
+                    
+                }
+
+                console.log(state_obj["MA"])
+
+
+
+                var margin = {top: 20, right: 160, bottom: 35, left: 30};
+
+                var width = 960 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom;
+
+                var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                var dataset = d3.stack()(["bKill", "allKill"].map(function(fruit) {
+                    return state_obj["MA"].map(function(d) {
+                        console.log({x: d.city, y: d[fruit]})
+                        return {x: d.city, y: +d[fruit]};
+                    });
+                }));
+
+                // Set x, y and colors
+                var x = d3.scaleOrdinal()
+                    .domain(dataset[0].map(function(d) { return d.x; }))
+                    .rangeRoundBands([10, width-10], 0.02);
+
+                // var y = d3.scale.linear()
+                //     .domain([0, d3.max(dataset, function(d) {  return d3.max(d, function(d) { return d.y0 + d.y; });  })])
+                //     .range([height, 0]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
                 
 
+                // var w = 500;
+                // var h = 300;
+                // var stack = d3.stack().keys(["bKill", "allKill"]);
+                // var series = stack(state_obj["MA"]);
+
+                // var xScale = d3.scaleBand()
+                //     .domain(d3.range(state_obj["MA"].length))
+                //     .range([0, w])
+                //     .paddingInner(0.05);
+
+                // var yScale = d3.scaleLinear()
+                //     .domain([0,				
+                //         d3.max(state_obj["MA"], function(d) {
+                //             return d.bKill + d.allKill;
+                //         })
+                //     ])
+                //     .range([0, h]);
+
+                //     //Easy colors accessible via a 10-step ordinal scale
+                // var colors = d3.scaleOrdinal(d3.schemeCategory10);
+		
+                // //Create SVG element
+                // var svg = d3.select("body")
+                //     .append("svg")
+                //     .attr("width", w)
+                //     .attr("height", h);
+
+                // // Add a group for each row of data
+                // var groups = svg.selectAll("g")
+                //     .data(series)
+                //     .enter()
+                //     .append("g")
+                //     .style("fill", function(d, i) {
+                //         return colors(i);
+                //     });
+
+                // // Add a rect for each data value
+                // var rects = groups.selectAll("rect")
+                //     .data(function(d) { return d; })
+                //     .enter()
+                //     .append("rect")
+                //     .attr("x", function(d, i) {
+                //         return xScale(i);
+                //     })
+                //     .attr("y", function(d) {
+                //         return yScale(d[0]);
+                //     })
+                //     .attr("height", function(d) {
+                //         return yScale(d[1]) - yScale(d[0]);
+                //     })
+                //     .attr("width", xScale.bandwidth());
 
 
 
 
-			});
-           
 
 
-         
 
-
+            });
+               
+                        
 				
 										
 		</script>
