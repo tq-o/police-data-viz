@@ -254,7 +254,6 @@
 				.on("mouseover", function(even, d){
                         d3.select(this)
                             .attr("stroke-width", 5)
-							.style("cursor", "pointer"); 
 						divDotRace.transition()		
                             .duration(200)		
                             .style("opacity", 0.9);
@@ -263,8 +262,7 @@
                 })
 				.on("mouseout", function(even, i){
                         d3.select(this)
-						    .attr("stroke-width", 1)
-							.style("cursor", "default");
+						    .attr("stroke-width", 1);
 						divDotRace.transition()		
                             .duration(500)		
                             .style("opacity", 0);	
