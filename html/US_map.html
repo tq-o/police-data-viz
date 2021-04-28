@@ -10,6 +10,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
 	<link rel="stylesheet" href="../css/US_map.css" />
+	<script src="venn.js"></script>
 	<style type="text/css">
 	</style>
 </head>
@@ -162,10 +163,18 @@
 		var divBarDot = bar_div.append("div")
 				.attr("class", "tooltipDot");
 				
-		divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total Deaths in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Deaths in Black Population 2013~2021</strong></p></div>")
+		divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total Police Killings in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Police Killings in Black Population 2013~2021</strong></p></div>")
 			.style("left", "70%");
 			
 		var bar_svg2 = bar_div.append("svg").attr("width", 380).attr("height", 450).style("background-color", "white").attr("transform", "translate(1, 0)");
+		
+		// VENN DIAGRAM TOOLTIP INITIALIZATION
+		var venn_div = d3.select("body")
+						.append("div")
+						.attr("class", "tooltipVenn")
+						.style("opacity", 0);
+		venn_div.append("h1");
+		venn_div.append("div").attr("id", "venn_one").style("float", "left");
 
 						
 		// MAP SVG INITIALIZATION
@@ -195,10 +204,10 @@
 		//var pd_descriptor = d3.select("p")
 		//					.append("div")
 		//					.text("Police Department Chart Type");
-		var state_chart_types = ["Races: Breakdown and Armed vs. Unarmed", "City-Level Police Violence on Black People"];
-		var pd_chart_types = ["Police Kill Rates per Race", "Police Violence on Black Mortality Rate"];
+		var state_chart_types = ["Races: Breakdown and Armed vs. Unarmed", "City-Level Police Violence on Black People", "Police Violence Within State Black Population"];
+		//var pd_chart_types = ["Police Kill Rates per Race", "Police Violence on Black Mortality Rate"];
 		var state_chart_name = state_chart_types[0];
-		var pd_chart_name = pd_chart_types[0];
+		//var pd_chart_name = pd_chart_types[0];
 		var selector_p = d3.select("body")
 						.append("p")
 						.attr("class", "selectors")
@@ -210,6 +219,7 @@
 											.attr("class", "select")
 											.property("disabled", true);
 		selector_p.append("div").attr("class", "space");
+		/*
 		var pd_selector = selector_p.append("div")
 											.attr("class", "pd_select_div")
 											.text("Police Department Chart Type")
@@ -217,24 +227,28 @@
 											.append("select")
 											.attr("class", "select")
 											.property("disabled", true);
+		*/
 		state_selector.on("change", function(event) {
 			state_chart_name = state_selector.property("value");
-			console.log(state_chart_name);
 		});
+		/*
 		pd_selector.on("change", function(event) {
 			pd_chart_name = pd_selector.property("value");
 			console.log(pd_chart_name);
 		});
+		*/
 		var state_options = state_selector.selectAll("option")
 							.data(state_chart_types)
 							.enter()
 							.append("option")
 							.text(function(d) { return d; });
+		/*
 		var pd_options = pd_selector.selectAll("option")
 							.data(pd_chart_types)
 							.enter()
 							.append("option")
 							.text(function(d) { return d; });
+		*/
 		
 		// LOADING AND USING DATA
 					
@@ -263,8 +277,6 @@
 											 //.exponent(0.4)
 											 .domain(stateScale.domain())
 											 .range([0, 300]);
-						console.log(d3.max(totals, function(d) { return d.total; }));
-						console.log(totals[31]);
 									
 						var stack = d3.stack()
 										.keys(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
@@ -616,6 +628,63 @@
 											.attr("x", (p, i) => xScale(i) + 25)
 											.attr("y", p => yScale(p[1]));
 											
+								// VENN DIAGRAM CONSTRUCTION
+								
+								var data_obj_venn = Array.from(csv, x => ({ state: x["State Abbreviation"],
+												black: x["Black Population"],
+                                                bkill: x["# Black people killed"],
+                                                tkill: x["# People Killed"]
+                                                
+									}));
+								state = "AL"
+								var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
+
+								var sets = [
+											{sets: ["Black Population"], figure: parseInt(b.black.split(',').join("")), label: "Black Population: " + b.black, size: parseInt(b.black.split(',').join(""))/100},
+											{sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
+											{sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
+											];
+
+
+								var chart = venn.VennDiagram()
+									.width(600)
+									.height(400);
+
+								d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
+								var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
+								venn_div_inner.selectAll("text")
+										.style("fill", "black")
+										.style("font-size", "13px");
+								venn_div_inner.selectAll(".venn-circle path")
+										.style("fill-opacity", .8)
+										.style("stroke-width", 1)
+										.style("stroke-opacity", 1)
+										.style("stroke", "fff");
+											
+
+								var tooltip = d3.select("#venn_one").append("div")
+									.attr("class", "venntooltip");
+
+								
+								var x = venn.x_re_f()
+								var y = venn.y_re_f()
+							
+								// .attr("width", 400).attr("height", 400);
+								venn_div.select("svg").append('line')
+											.attr("x1", x)
+											.attr("x2", x)
+											.attr("y1", y)
+											.attr("y2", y-150)
+											.style("stroke", "black");
+								venn_div.select("svg").append('text')
+											// .attr("x1", x)
+											.attr("x", x-65)
+											// .attr("y1", y)
+											.attr("y", y-152)
+											.text("Black People Killed: " + b.bkill)
+											.attr("font-size", "15px")
+											.attr("fill", "black");
+											
 								
 								// MAP CONSTRUCTION
 							
@@ -638,6 +707,7 @@
 										d3.select(event.currentTarget).style("fill", "#222222").style("stroke", "white").style("stroke-width", 2);
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 1); }
 										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 1); }
+										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 1); }
 										this.parentNode.appendChild(this);
 									})
 									.on("mousemove", function(event, d) {
@@ -776,6 +846,59 @@
 															.attr("y", p => yScale(p[1]));
 											
 										}
+										else if (state_chart_name == "Police Violence Within State Black Population") {
+											state = d.abbr;
+											venn_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											venn_div.selectAll("h1").text(d.name.toUpperCase());
+											venn_div.select("#venn_one").selectAll("*").remove();
+											var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
+
+											var sets = [
+														{sets: ["Black Population"], figure: parseInt(b.black.split(',').join("")), label: "Black Population: " + b.black, size: parseInt(b.black.split(',').join(""))/100},
+														{sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
+														{sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
+														];
+
+
+											var chart = venn.VennDiagram()
+												.width(600)
+												.height(400);
+
+											d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
+											var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
+											venn_div_inner.selectAll("text")
+													.style("fill", "black")
+													.style("font-size", "13px");
+											venn_div_inner.selectAll(".venn-circle path")
+													.style("fill-opacity", .8)
+													.style("stroke-width", 1)
+													.style("stroke-opacity", 1)
+													.style("stroke", "fff");
+														
+
+											var tooltip = d3.select("#venn_one").append("div")
+												.attr("class", "venntooltip");
+
+											
+											var x = venn.x_re_f()
+											var y = venn.y_re_f()
+										
+											// .attr("width", 400).attr("height", 400);
+											venn_div.select("svg").append('line')
+														.attr("x1", x)
+														.attr("x2", x)
+														.attr("y1", y)
+														.attr("y2", y-150)
+														.style("stroke", "black");
+											venn_div.select("svg").append('text')
+														// .attr("x1", x)
+														.attr("x", x-65)
+														// .attr("y1", y)
+														.attr("y", y-152)
+														.text("Black People Killed: " + b.bkill)
+														.attr("font-size", "15px")
+														.attr("fill", "black");
+										}
 									})
 									.on("mouseout", function(event, d) {
 										d3.select(event.currentTarget).style("fill", function(d) {
@@ -787,6 +910,7 @@
 									.on("mouseleave", function(event, d) {
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 0); }
 										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 0); }
+										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 0); }
 									});
 								
 								// POLICE DEPARTMENT TOOLTIP
@@ -907,7 +1031,7 @@
 								// ENABLING DROPDOWNS
 								
 								state_selector.property("disabled", false);
-								pd_selector.property("disabled", false);
+								//pd_selector.property("disabled", false);
 					});
 			});
 		var states = svg.selectAll("path");

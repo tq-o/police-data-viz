@@ -60,8 +60,23 @@ h2 {
   border-style: solid;
   border-color: black;
   border-width: 2px;
-  width: 520px;
-  height: 580px;
+  width: 400px;
+  height: 570px;
+  pointer-events: none;
+}
+
+.tooltipVenn {
+  position: absolute;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  background-color: white;
+  color: black;
+  text-align: center;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+  width: 600px;
+  height: 450px;
   pointer-events: none;
 }
 

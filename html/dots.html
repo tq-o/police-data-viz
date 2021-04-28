@@ -483,10 +483,14 @@
 					// .textContent
 						for (var item in d){
 							if (c[a].innerHTML.includes(d[item].name)) {
-								if (c[a].style.opacity === "1")
+								if (c[a].style.opacity === "1"){
+									c[a].style.transition = "opacity 0.5s ease-in-out";
 									c[a].style.opacity = "0.3";
-								else
+								}
+								else{
+									c[a].style.transition = "opacity 0.5s ease-in-out";
 									c[a].style.opacity = "1";
+								}
 							}
 						}
 					}
