@@ -63,7 +63,7 @@
 
             var div = d3.select("#venn_one").datum(sets).call(chart);
                 div.selectAll("text")
-                        .style("fill", "white")
+                        .style("fill", "black")
                         .style("font-size", "13px");
                 div.selectAll(".venn-circle path")
                         .style("fill-opacity", .8)
@@ -94,7 +94,7 @@
                         .attr("y", y-152)
                         .text("Black people killed: " + b.bkill)
                         .attr("font-size", "15px")
-                        .attr("fill", "white")
+                        .attr("fill", "black")
 
                 })
         </script>
