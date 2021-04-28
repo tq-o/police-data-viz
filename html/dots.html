@@ -17,9 +17,9 @@
 	<script type="text/javascript">
 
 		//Width and height
-		var w = 2000;
-		var h = 1000;
-		var padding = 250;
+		var w = 1850;
+		var h = 880;
+		var padding = 290;
 		//Original data
 	
 		var res = [];
@@ -215,7 +215,7 @@
 				.attr("r", function (d,i) {
 					// console.log(d);
 					if (d.count>1000)
-						return d.count/70;
+						return d.count/72;
 					else if (d.count>500)
 						return d.count/15;
 					else if (d.count<20)
@@ -230,22 +230,17 @@
 			//Add a simple tooltip
 			nodes.append("title")
 				.text(function(d) {
-					return d.name;
+					return "Count: " + d.count;
 				});
 			nodes2.append("title")
 				.text(function(d) {
-					return d.name;
+					return "Count: " + d.count;
 				});
 			nodes3.append("title")
 				.text(function(d) {
-					return d.name;
+					return "Count: " + d.count;
 				});	 
-		//Every time the simulation "ticks", this will be called
-
-			// edges.attr("x1", function(d) { return d.source.x; })
-			// 	 .attr("y1", function(d) { return d.source.y; })
-			// 	 .attr("x2", function(d) { return d.target.x; })
-			// 	 .attr("y2", function(d) { return d.target.y; });
+		
 			nodes.attr("cx", function(d, i) { 
 					d.x = padding + (w-w/2)*i/6.5;
 					return d.x; 
@@ -254,6 +249,37 @@
 					d.y = h/5;
 					return d.y; 
 				});
+
+			svg.selectAll("text")
+			   .data(dataset.nodes)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.name;
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return padding + (w-w/2)*i/6.5;
+			   })
+			   .attr("y", function(d) {
+				    var o = 0;
+					if (d.count<100)
+						o = d.count/3;
+					else if (d.count>4000)
+						o = d.count/60;
+					else if (d.count>1000)
+						o = d.count/16;
+					else if (d.count>400)
+						o = d.count/12.5;
+					else if (d.count>200)
+						o = d.count/9;
+					else o = d.count/18;
+			   		return - o + h/5 - 20;
+			   })
+			//    .attr("font-family", "sans-serif")
+			   .attr("font-size", "13px")
+			   .attr("fill", "white");
+
 			nodes2.attr("cx", function(d, i) { 
 					d.x = padding + (w-w/10)*i/8;
 					return d.x; 
@@ -263,7 +289,7 @@
 					return d.y; 
 				});
 
-			svg.selectAll("text")
+			svg.selectAll("text2")
 			   .data(dataset.nodes2)
 			   .enter()
 			   .append("text")
@@ -289,12 +315,38 @@
 
 
 			nodes3.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/2)*i/6;
+					d.x = padding - 50 + (w-w/2)*i/5.5;
 					return d.x; })
 				.attr("cy", function(d, i) { 
 					d.y = h/1.3;
 					return d.y; });
+			
+			svg.selectAll("text3")
+			   .data(dataset.nodes3)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.name;
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return padding - 50 + (w-w/2)*i/5.5;
+			   })
+			   .attr("y", function(d) {
+				    var o = 0;
 
+					if (d.count>1000)
+						o = d.count/72;
+					else if (d.count>500)
+						o = d.count/15;
+					else if (d.count<20)
+						o = d.count*3;
+					else o = d.count;
+					return - o + h/1.3 - 20;
+			   })
+			//    .attr("font-family", "sans-serif")
+			   .attr("font-size", "13px")
+			   .attr("fill", "white");
 			// console.log(dataset.nodes2.filter(i => i.name === "White")[0].x)
 			var dataset2 = []
 			var click = ""
