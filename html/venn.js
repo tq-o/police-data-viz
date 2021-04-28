@@ -3,7 +3,8 @@
     typeof define === 'function' && define.amd ? define(['exports', 'd3-selection', 'd3-transition'], factory) :
     (factory((global.venn = {}),global.d3,global.d3));
 }(this, (function (exports,d3Selection,d3Transition) { 'use strict';
-
+    var x_re = 0;
+    var y_re = 0;
     var SMALL = 1e-10;
 
     /** Returns the intersection area of a bunch of circles (where each circle
@@ -1411,8 +1412,14 @@
             var updateText = update.selectAll("text")
                 .filter(function (d) { return d.sets in textCentres; })
                 .text(function (d) { return label(d); } )
-                .attr("x", function(d) { return Math.floor(textCentres[d.sets].x);})
-                .attr("y", function(d) { return Math.floor(textCentres[d.sets].y);});
+                .attr("x", function(d) { 
+                    x_re = Math.floor(textCentres[d.sets].x); console.log(x_re); return x_re;
+                })
+                .attr("y", function(d) { 
+                    y_re = Math.floor(textCentres[d.sets].y); 
+                    console.log(y_re); 
+                    return y_re;
+                });
 
             if (wrap) {
                 if (hasPrevious) {
@@ -1533,6 +1540,14 @@
         };
 
         return chart;
+    }
+
+    function x_re_f(){
+        return x_re
+    }
+
+    function y_re_f(){
+        return y_re
     }
     // sometimes text doesn't fit inside the circle, if thats the case lets wrap
     // the text here such that it fits
@@ -1854,7 +1869,8 @@
     exports.circlePath = circlePath;
     exports.circleFromPath = circleFromPath;
     exports.intersectionAreaPath = intersectionAreaPath;
-
+    exports.x_re_f = x_re_f;
+    exports.y_re_f = y_re_f;
     Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
