@@ -19,7 +19,7 @@
 		//Width and height
 		var w = 1850;
 		var h = 880;
-		var padding = 290;
+		var padding = 250;
 		//Original data
 	
 		var res = [];
@@ -215,7 +215,7 @@
 				.attr("r", function (d,i) {
 					// console.log(d);
 					if (d.count>1000)
-						return d.count/72;
+						return d.count/70;
 					else if (d.count>500)
 						return d.count/15;
 					else if (d.count<20)
@@ -230,15 +230,15 @@
 			//Add a simple tooltip
 			nodes.append("title")
 				.text(function(d) {
-					return "Count: " + d.count;
+					return d.name;
 				});
 			nodes2.append("title")
 				.text(function(d) {
-					return "Count: " + d.count;
+					return d.name;
 				});
 			nodes3.append("title")
 				.text(function(d) {
-					return "Count: " + d.count;
+					return d.name;
 				});	 
 		
 			nodes.attr("cx", function(d, i) { 
@@ -315,12 +315,11 @@
 
 
 			nodes3.attr("cx", function(d, i) { 
-					d.x = padding - 50 + (w-w/2)*i/5.5;
+					d.x = padding -50 + (w-w/2)*i/5.5;
 					return d.x; })
 				.attr("cy", function(d, i) { 
 					d.y = h/1.3;
 					return d.y; });
-			
 			svg.selectAll("text3")
 			   .data(dataset.nodes3)
 			   .enter()
@@ -344,7 +343,6 @@
 					else o = d.count;
 					return - o + h/1.3 - 20;
 			   })
-			//    .attr("font-family", "sans-serif")
 			   .attr("font-size", "13px")
 			   .attr("fill", "white");
 			// console.log(dataset.nodes2.filter(i => i.name === "White")[0].x)
