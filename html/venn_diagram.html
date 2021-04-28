@@ -46,11 +46,15 @@
                                                 tkill: x["# People Killed"]
                                                 
 				}));
-            var state = "AL"
+            var state = "RI"
             var b = data_obj.filter(function(d) { return (d.state === state); })[0];
+			
+			console.log(parseInt(b.black.split(',').join(""))/100);
+			console.log(b.tkill);
 
-            var sets = [
-                        {sets: ["Black Population"], figure: parseInt(b.black.split(',').join("")), label: "Black Population: " + b.black, size: parseInt(b.black.split(',').join(""))/100},
+            var black = parseInt(b.black.split(',').join("")) > 20000?  parseInt(b.black.split(',').join(""))/100: parseInt(b.black.split(',').join(""))/10; 
+			var sets = [
+                        {sets: ["Black Population"], figure: black, label: "Black Population: " + b.black, size: black},
                         {sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed: " + b.tkill, size: b.tkill.split(',').join("")},
                         {sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
                         ];
