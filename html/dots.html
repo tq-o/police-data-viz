@@ -226,7 +226,7 @@
                 })
 				.on("mousemove", function(even, d){
                         console.log(d)
-                        divLine.html(d.name)
+                        divLine.html(d.count)
                             .style("left", (event.pageX) + "px")
                             .style("top", (event.pageY - 28) + "px");
                 });
@@ -261,10 +261,6 @@
                             .style("opacity", 0.9);
 
 						console.log(d);
-                        
-                        // divLine.html(d.name)	  
-                        //     .style("left", (event.pageX) + "px")
-                        //     .style("top", (event.pageY - 28) + "px");	
                 })
 				.on("mouseout", function(even, i){
                         d3.select(this)
@@ -275,7 +271,7 @@
                 })
 				.on("mousemove", function(even, d){
                         console.log(d)
-                        divLine.html(d.name)
+                        divLine.html(d.count)
                             .style("left", (event.pageX) + "px")
                             .style("top", (event.pageY - 28) + "px");
 
@@ -310,10 +306,6 @@
                             .style("opacity", 0.9);
 
 						console.log(d);
-                        
-                        // divLine.html(d.name)	  
-                        //     .style("left", (event.pageX) + "px")
-                        //     .style("top", (event.pageY - 28) + "px");	
                 })
 				.on("mouseout", function(even, i){
                         d3.select(this)
@@ -324,7 +316,7 @@
                 })
 				.on("mousemove", function(even, d){
                         console.log(d)
-                        divLine.html(d.name)
+                        divLine.html(d.count)
                             .style("left", (event.pageX) + "px")
                             .style("top", (event.pageY - 28) + "px");
 
