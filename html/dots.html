@@ -18,8 +18,8 @@
 
 		//Width and height
 		var w = 2000;
-		var h = 1300;
-		var padding = 300;
+		var h = 1000;
+		var padding = 250;
 		//Original data
 	
 		var res = [];
@@ -247,7 +247,7 @@
 			// 	 .attr("x2", function(d) { return d.target.x; })
 			// 	 .attr("y2", function(d) { return d.target.y; });
 			nodes.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/2)*i/5.5;
+					d.x = padding + (w-w/2)*i/6.5;
 					return d.x; 
 				})
 				.attr("cy", function(d, i) { 
@@ -255,7 +255,7 @@
 					return d.y; 
 				});
 			nodes2.attr("cx", function(d, i) { 
-					d.x = padding + (w-w/10)*i/7;
+					d.x = padding + (w-w/10)*i/8;
 					return d.x; 
 				})
 				.attr("cy", function(d, i) { 
@@ -272,7 +272,7 @@
 			   })
 			   .attr("text-anchor", "middle")
 			   .attr("x", function(d, i) {
-			   		return padding + (w-w/10)*i/7;
+			   		return padding + (w-w/10)*i/8;
 			   })
 			   .attr("y", function(d) {
 				    var o = 0;
