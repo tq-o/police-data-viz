@@ -83,8 +83,8 @@
 
                 d3.select("body").append("svg").attr("width", 550).attr("height", 500)
 
-                // var xScale = d3.scaleLinear().domain([0,10]).range([20,480])
-                var xScale = d3.scaleLinear().domain(city).range([20,480])
+                var xScale = d3.scaleLinear().domain([0,10]).range([20,480])
+                // var xScale = d3.scaleLinear().domain(city).range([20,480])
 
                 var yScale = d3.scaleLinear().domain([0,range3 ]).range([480,20])
                 var heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480])
@@ -102,6 +102,11 @@
                 
                 xAxis = d3.axisBottom()
                     .scale(xScale)
+                    .tickFormat(function(d, i) { 
+                        if (i!== 0) 
+                            return city[i]; 
+                        else return "";
+                    })
                     .tickSize(-500)   
                 
                 d3.select("svg").append("g")
