@@ -762,9 +762,14 @@
 											barGroups2.data(stackLayout(state_obj[state])).enter();
 																							
 											bars2 =	barGroups2.selectAll("rect") 
-															.data(function(d) { return d; })
+															.data(function(d) { return d; })					
 															.enter()
 															.append("rect")
+															.transition()
+															.delay(function(d, i) {
+                                                                return i / 2*200;
+                                                            })
+															.duration(1000)
 															.attr("width", 20)
 															.attr("height", p => heightScale(p[1]) - heightScale(p[0]))
 															.attr("x", (p, i) => xScale(i) + 25)
@@ -775,7 +780,9 @@
 									.on("mouseout", function(event, d) {
 										d3.select(event.currentTarget).style("fill", function(d) {
 											return stateScale(d.total);
-										}).style("stroke", "#002760").style("stroke-width", 1);
+										})
+										.style("stroke", "#002760")
+										.style("stroke-width", 1);
 									})
 									.on("mouseleave", function(event, d) {
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 0); }
