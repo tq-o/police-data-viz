@@ -72,7 +72,7 @@
                         .attr("class", "tooltipDot")
                         .style("opacity",1)
 
-                divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total death 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total black death 2013~2021</strong></p></div>")
+                divBarDot.html("<div classname = tooltipColor> <p> <span class=orangeDot></span><strong>&nbsp Total Deaths in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Deaths in Black Population 2013~2021</strong></p></div>")
                     .style("left", "70%");
 
 				var data_obj = Array.from(csv, x => ({ race: x["Victim's race"],
@@ -100,7 +100,7 @@
                 });
 
       
-                var state = "GA"
+                var state = "ND"
 
 
                 for (var i in state_obj) {
@@ -179,6 +179,7 @@
                     .append("g")
                     .attr("class", "bar")
                     .each(function(d) {
+					console.log(d);
                 d3.select(this).selectAll("rect") 
                     .data(d)
                     .enter()
