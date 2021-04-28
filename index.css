@@ -46,3 +46,7 @@ button:hover {
   color: orange;
   transform: scale(1.5);
 }
+
+iframe {
+	overflow: hidden;
+}
