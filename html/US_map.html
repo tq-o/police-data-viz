@@ -705,7 +705,7 @@
 										return stateScale(d.total);
 									})
 									.on("mouseover", function(event, d) {
-										d3.select(event.currentTarget).style("fill", "#222222").transition().style("stroke", "white").style("stroke-width", 4);
+										d3.select(event.currentTarget).style("fill", "#222222").style("stroke", "white").style("stroke-width", "2px");
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 1); }
 										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 1); }
 										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 1); }
@@ -903,18 +903,24 @@
 										}
 									})
 									.on("mouseout", function(event, d) {
-										d3.select(event.currentTarget).transition().duration(500).style("fill", function(d) {
-											return stateScale(d.total);
-										})
-										// .transition().duration(500)
-										.style("stroke", "#002760")
-										.style("stroke-width", 1);
+										d3.select(event.currentTarget)
+												.transition()
+												.duration(300)
+												.style("fill", function(d) {
+													return stateScale(d.total);
+												})
+												.style("stroke", "#002760")
+												.style("stroke-width", "1px");
 									})
 									.on("mouseleave", function(event, d) {
-										d3.select(event.currentTarget).transition().duration(500).style("fill", function(d) {
-											return stateScale(d.total);
-										})
-										.style("stroke", "#002760").style("stroke-width", 1)
+										d3.select(event.currentTarget)
+												.transition()
+												.duration(300)
+												.style("fill", function(d) {
+													return stateScale(d.total);
+												})
+												.style("stroke", "#002760")
+												.style("stroke-width", "1px");
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 0); }
 										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 0); }
 										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 0); }
