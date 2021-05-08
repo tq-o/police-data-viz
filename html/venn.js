@@ -1257,7 +1257,7 @@
             // so this is the same as d3.schemeCategory10, which is only defined in d3 4.0
             // since we can support older versions of d3 as long as we don't force this,
             // I'm hackily redefining below. TODO: remove this and change to d3.schemeCategory10
-            colourScheme = ["#00e1ff", "#ffab00"],
+            colourScheme = ["#5f9ed1", "#ff800e"],
             colourIndex = 0,
             colours = function(key) {
                 if (key in colourMap) {

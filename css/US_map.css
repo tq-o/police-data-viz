@@ -173,21 +173,21 @@ div.tooltipColor {
 }
 
 .orangeDot {
-	fill: #ffab00;
+	fill: #ff800e;
 	stroke: #fff;
 	height: 10px;
 	width: 10px;
-	background-color: #ffab00;
+	background-color: #ff800e;
 	/* border-radius: 50%; */
 	display: inline-block;
 }
 
 .blueDot {
-	fill: #00e1ff;
+	fill: #5f9ed1;
 	stroke: #fff;
 	height: 10px;
 	width: 10px;
-	background-color: #00e1ff;
+	background-color: #5f9ed1;
 	/* border-radius: 50%; */
 	display: inline-block;
 }
