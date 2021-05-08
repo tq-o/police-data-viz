@@ -770,8 +770,10 @@
 										else if (state_chart_name == "City-Level Police Violence on Black People") {
 											// BAR GRAPH
 											state = d.abbr;
-											divBarDot.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											bar_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											// divBarDot.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											// bar_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											divBarDot.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
+											bar_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
 											bar_div.selectAll("h1").text(d.name.toUpperCase());
 								  
 											range = state_obj[state][0].bKill;
