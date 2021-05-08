@@ -714,7 +714,8 @@
 									.on("mousemove", function(event, d) {
 										var mouse_pos = d3.pointer(event, svg);
 										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") {
-											spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											// spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											spider_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
 											spider_div.selectAll("h1").text(d.name.toUpperCase());
 											var state_bar = stack([d]);
 											bar_group.data(state_bar).enter();
@@ -770,8 +771,6 @@
 										else if (state_chart_name == "City-Level Police Violence on Black People") {
 											// BAR GRAPH
 											state = d.abbr;
-											// divBarDot.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											// bar_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
 											divBarDot.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
 											bar_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
 											bar_div.selectAll("h1").text(d.name.toUpperCase());
@@ -851,7 +850,8 @@
 										}
 										else if (state_chart_name == "Police Violence Within State Black Population") {
 											state = d.abbr;
-											venn_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											// venn_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+											venn_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
 											venn_div.selectAll("h1").text(d.name.toUpperCase());
 											venn_div.select("#venn_one").selectAll("*").remove();
 											var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
