@@ -2,1055 +2,1055 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<title>map</title>
-	<link rel="shortcut icon" href="#">
-	<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
-	<script type="text/javascript" src="https://d3js.org/topojson.v3.min.js"></script>
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
-	<link rel="stylesheet" href="../css/US_map.css" />
-	<script src="venn.js"></script>
-	<style type="text/css">
-	</style>
+    <meta charset="utf-8">
+    <title>map</title>
+    <link rel="shortcut icon" href="#">
+    <script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+    <script type="text/javascript" src="https://d3js.org/topojson.v3.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="../css/US_map.css" />
+    <script src="venn.js"></script>
+    <style type="text/css">
+    </style>
 </head>
 
 <body>
-	<script type="text/javascript">
-		var proj_state = d3.geoAlbers().scale([750]);
-		//var path_state = d3.geoPath().projection(proj_state);
-		
-		// SPIDER GRAPH TOOLTIP INITIALIZATION
+    <script type="text/javascript">
+        var proj_state = d3.geoAlbers().scale([750]);
+        //var path_state = d3.geoPath().projection(proj_state);
+        
+        // SPIDER GRAPH TOOLTIP INITIALIZATION
 
-		var spider_div = d3.select("body")
-							.append("div")
-							.attr("class", "tooltip")
-							.style("opacity", 0);
-							
-		spider_div.append("h1");
-		spider_div.append("h2").text("Breakdown of Police Killings by Race");
-		var spider_padding = 25;
-		var spider_graph_size = 300;
-				
-		// POLICE DEPARTMENT TOOLTIP INITIALIZATION
-		
-		var pd_div = d3.select("body")
-						.append("div")
-						.attr("class", "pdtip")
-						.style("opacity", 0);
-		pd_div.append("h1");
-		pd_div.append("h2").attr("class", "uppertext");
-		pd_div.append("hr");
-		pd_div.append("h2").attr("class", "bottomtext");
-		var pd_table = pd_div.append("svg")
-							.attr("height", 200)
-							.attr("width", 300);
-									
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 0)
-				.attr("fill", "#006ba4");
-		var pd_black_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 12.5)
-				.text("Black");
+        var spider_div = d3.select("body")
+                            .append("div")
+                            .attr("class", "tooltip")
+                            .style("opacity", 0);
+                            
+        spider_div.append("h1");
+        spider_div.append("h2").text("Breakdown of Police Killings by Race");
+        var spider_padding = 25;
+        var spider_graph_size = 300;
+                
+        // POLICE DEPARTMENT TOOLTIP INITIALIZATION
+        
+        var pd_div = d3.select("body")
+                        .append("div")
+                        .attr("class", "pdtip")
+                        .style("opacity", 0);
+        pd_div.append("h1");
+        pd_div.append("h2").attr("class", "uppertext");
+        pd_div.append("hr");
+        pd_div.append("h2").attr("class", "bottomtext");
+        var pd_table = pd_div.append("svg")
+                            .attr("height", 200)
+                            .attr("width", 300);
+                                    
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 0)
+                .attr("fill", "#006ba4");
+        var pd_black_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 12.5)
+                .text("Black");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 25)
-				.attr("fill", "#595959");
-		var pd_hispanic_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 37.5)
-				.text("Hispanic");
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 25)
+                .attr("fill", "#595959");
+        var pd_hispanic_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 37.5)
+                .text("Hispanic");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 50)
-				.attr("fill", "#ffbc79");
-		var pd_native_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 62.5)
-				.text("Native American");
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 50)
+                .attr("fill", "#ffbc79");
+        var pd_native_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 62.5)
+                .text("Native American");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 75)
-				.attr("fill", "#5f9ed1");
-		var pd_asian_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 87.5)
-				.text("Asian");
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 75)
+                .attr("fill", "#5f9ed1");
+        var pd_asian_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 87.5)
+                .text("Asian");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 100)
-				.attr("fill", "#a2c8ec");
-		var pd_pacific_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 112.5)
-				.text("Pacific Islander");
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 100)
+                .attr("fill", "#a2c8ec");
+        var pd_pacific_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 112.5)
+                .text("Pacific Islander");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 125)
-				.attr("fill", "#ff800e");
-		var pd_white_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 137.5)
-				.text("White");
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 125)
+                .attr("fill", "#ff800e");
+        var pd_white_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 137.5)
+                .text("White");
 
-		pd_table.append("rect")
-				.attr("height", 15)
-				.attr("width", 15)
-				.attr("x", 50)
-				.attr("y", 150)
-				.attr("fill", "#ababab");
-		var pd_unknown_text = pd_table.append("text")
-				.attr("class", "spider-label")
-				.attr("x", 75)
-				.attr("y", 162.5)
-				.text("Unknown race");
-				
-		pd_table.append("line")
-				.style("stroke", "black")
-				.style("stroke-width", 1)
-				.style("shape-rendering", "crispEdges")
-				.attr("x1", 200)
-				.attr("y1", 0)
-				.attr("x2", 200)
-				.attr("y2", 165);
-						
-		var bar_svg = spider_div.append("svg")
-						.attr("width", 300)
-						.attr("height", 20);
-						
-		var spider_svg = spider_div.append("svg")
-						.attr("width", spider_graph_size)
-						.attr("height", spider_graph_size);
-						
-		// BAR GRAPH TOOLTIP INITIALIZATION
-		var divBar = d3.select("body").append("div")
-				.attr("class", "tooltipBar")
-				.style("opacity",0)
+        pd_table.append("rect")
+                .attr("height", 15)
+                .attr("width", 15)
+                .attr("x", 50)
+                .attr("y", 150)
+                .attr("fill", "#ababab");
+        var pd_unknown_text = pd_table.append("text")
+                .attr("class", "spider-label")
+                .attr("x", 75)
+                .attr("y", 162.5)
+                .text("Unknown race");
+                
+        pd_table.append("line")
+                .style("stroke", "black")
+                .style("stroke-width", 1)
+                .style("shape-rendering", "crispEdges")
+                .attr("x1", 200)
+                .attr("y1", 0)
+                .attr("x2", 200)
+                .attr("y2", 165);
+                        
+        var bar_svg = spider_div.append("svg")
+                        .attr("width", 300)
+                        .attr("height", 20);
+                        
+        var spider_svg = spider_div.append("svg")
+                        .attr("width", spider_graph_size)
+                        .attr("height", spider_graph_size);
+                        
+        // BAR GRAPH TOOLTIP INITIALIZATION
+        var divBar = d3.select("body").append("div")
+                .attr("class", "tooltipBar")
+                .style("opacity",0)
 
-			
-		var bar_div = d3.select("body")
-							.append("div")
-							.attr("class", "tooltipBarBG")
-							.style("opacity", 0);
-								
-		bar_div.append("h1");
-							
-		var divBarDot = bar_div.append("div")
-				.attr("class", "tooltipDot");
-				
-		divBarDot.html("<div classname = tooltipColor> <p> <strong> Top 10 city with black people killed</strong></p> <p> <span class=orangeDot></span><strong>&nbsp Total Police Killings in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Police Killings in Black Population 2013~2021</strong></p></div>")
-			.style("left", "70%");
-			
-		var bar_svg2 = bar_div.append("svg").attr("width", 380).attr("height", 450).style("background-color", "white").attr("transform", "translate(1, 0)");
-		
-		// VENN DIAGRAM TOOLTIP INITIALIZATION
-		var venn_div = d3.select("body")
-						.append("div")
-						.attr("class", "tooltipVenn")
-						.style("opacity", 0);
-		venn_div.append("h1");
-		venn_div.append("div").attr("id", "venn_one").style("float", "left");
+            
+        var bar_div = d3.select("body")
+                            .append("div")
+                            .attr("class", "tooltipBarBG")
+                            .style("opacity", 0);
+                                
+        bar_div.append("h1");
+                            
+        var divBarDot = bar_div.append("div")
+                .attr("class", "tooltipDot");
+                
+        divBarDot.html("<div classname = tooltipColor> <p> <strong> Top 10 city with black people killed</strong></p> <p> <span class=orangeDot></span><strong>&nbsp Total Police Killings in Full Population 2013~2021 </strong></p><p> <span class=blueDot></span><strong>&nbsp Total Police Killings in Black Population 2013~2021</strong></p></div>")
+            .style("left", "70%");
+            
+        var bar_svg2 = bar_div.append("svg").attr("width", 380).attr("height", 450).style("background-color", "white").attr("transform", "translate(1, 0)");
+        
+        // VENN DIAGRAM TOOLTIP INITIALIZATION
+        var venn_div = d3.select("body")
+                        .append("div")
+                        .attr("class", "tooltipVenn")
+                        .style("opacity", 0);
+        venn_div.append("h1");
+        venn_div.append("div").attr("id", "venn_one").style("float", "left");
 
-						
-		// MAP SVG INITIALIZATION
-						
-		var svg = d3.select("body")
-					.append("svg")
-					.attr("width", 1000)
-					.attr("height", 500);
-					
-		
-		var loading_txt = svg.append("text")
-							.attr("x", 350)
-							.attr("y", 250)
-							.attr("class", "loading")
-							.text("LOADING...");
-					
-		var map_container = svg.append("g");
-		
-		// OPTION DROPDOWN
-		//var state_descriptor = d3.select("body")
-		//					.append("foreignObject")
-		//					.html("<p>State Chart Type &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Police Department Chart Type");
-							//.append("p")
-							//.text("State Chart Type")
-							//.append("b")
-							//.style("word-space", "2em")
-		//var pd_descriptor = d3.select("p")
-		//					.append("div")
-		//					.text("Police Department Chart Type");
-		var state_chart_types = ["Races: Breakdown and Armed vs. Unarmed", "City-Level Police Violence on Black People", "Police Violence Within State Black Population"];
-		//var pd_chart_types = ["Police Kill Rates per Race", "Police Violence on Black Mortality Rate"];
-		var state_chart_name = state_chart_types[0];
-		//var pd_chart_name = pd_chart_types[0];
-		var selector_p = d3.select("body")
-						.append("p")
-						.attr("class", "selectors")
-		var state_selector = selector_p.append("div")
-											.attr("class", "state_select_div")
-											.text("State Chart Type")
-											.append("p")
-											.append("select")
-											.attr("class", "select")
-											.property("disabled", true);
-		selector_p.append("div").attr("class", "space");
-		/*
-		var pd_selector = selector_p.append("div")
-											.attr("class", "pd_select_div")
-											.text("Police Department Chart Type")
-											.append("p")
-											.append("select")
-											.attr("class", "select")
-											.property("disabled", true);
-		*/
-		state_selector.on("change", function(event) {
-			state_chart_name = state_selector.property("value");
-		});
-		/*
-		pd_selector.on("change", function(event) {
-			pd_chart_name = pd_selector.property("value");
-			console.log(pd_chart_name);
-		});
-		*/
-		var state_options = state_selector.selectAll("option")
-							.data(state_chart_types)
-							.enter()
-							.append("option")
-							.text(function(d) { return d; });
-		/*
-		var pd_options = pd_selector.selectAll("option")
-							.data(pd_chart_types)
-							.enter()
-							.append("option")
-							.text(function(d) { return d; });
-		*/
-		
-		// LOADING AND USING DATA
-					
-		d3.json("https://d3js.org/us-10m.v1.json")
-			.then(function(json) {
-				d3.csv("../data/killingsbystate.csv")
-					.then(function(csv) {
-						// SPIDER GRAPH AND MAP DATA
-						var totals = Array.from(csv, x => ({ total: parseFloat(x["# People Killed"])/parseInt(x["Total Population"].replace(/,/g, "")),
-															pop: parseInt(x["Total Population"].replace(/,/g, "")),
-															name: x["State"],
-															abbr: x["State Abbreviation"],
-															black: parseInt(x["# Black people killed"])/parseFloat(x["# People Killed"]),
-															hispanic: parseInt(x["# Hispanic people killed"])/parseFloat(x["# People Killed"]),
-															native: parseInt(x["# Native American people killed"])/parseFloat(x["# People Killed"]),
-															asian: parseInt(x["# Asian people killed"])/parseFloat(x["# People Killed"]),
-															pacific: parseInt(x["# Pacific Islanders killed"])/parseFloat(x["# People Killed"]),
-															white: parseInt(x["# White people killed"])/parseFloat(x["# People Killed"]),
-															unknown: parseInt(x["# Unknown Race people killed"])/parseFloat(x["# People Killed"])
-															}));
-						var stateScale = d3.scaleLinear()
-											 //.exponent(0.4)
-											 .domain([0, d3.max(totals, function(d) { return d.total; })])
-											 .range(["#ffffff", "#0a4a7d"]);
-						var stateScale_numerical = d3.scaleLinear()
-											 //.exponent(0.4)
-											 .domain(stateScale.domain())
-											 .range([0, 300]);
-									
-						var stack = d3.stack()
-										.keys(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
-										.order(d3.stackOrderDescending);
-						var stacked_totals = stack(totals);
-						
-						var barXScale = d3.scaleLinear()
-											.domain([0, 1])
-											.range([0, 300])
-											
-						var colors = d3.scaleOrdinal()
-										.domain(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
-										.range(["#006ba4", "#595959", "#ffbc79", "#5f9ed1", "#a2c8ec", "#ff800e", "#ababab"]);
-										
-						
-						// SPIDER TOOLTIP SIDEWAYS BAR
-						
-						var bar_group = bar_svg.selectAll("g")
-										.data(stack([totals[9]]))
-										.enter()
-										.append("g")
-										.style("fill", function(d, i) {
-											return colors(i);
-										});
-						var bar_stack = bar_group.selectAll("rect")
-											.data(function(d) { return d; })
-											.enter()
-											.append("rect")
-											.attr("x", function(d) {
-												return Math.ceil(barXScale(d[0]));
-											})
-											.attr("y", 0)
-											.attr("height", 20)
-											.attr("width", function(d) {
-												return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
-											});
-						
-										
-						//var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
-						
-						var features = topojson.feature(json, json.objects.states).features;
-						features.sort((a, b) => (parseInt(a["id"]) < parseInt(b["id"])) ? -1 : 1);
-						// SPIDER GRAPH DATA PROCESSING
-						d3.csv("../data/policekillings.csv")
-							.then(function(csv_pk){
-								var instances = Array.from(csv_pk, x => ({ race: x["Victim's race"],
-																		state: x["State"],
-																		armed: x["Armed/Unarmed Status"]
-																	 }));
-								var state_abbr = Array.from(csv, x => x["State Abbreviation"]);
-								var states_spider_data = [];
-								var armed_stati = ["Allegedly Armed", "Unarmed/Did Not Have Actual Weapon", "Vehicle", "Unclear"];
-								var races = ["Black", "Hispanic", "Native American", "Asian", "Pacific Islander", "White", "Unknown race"];
-								for (state in state_abbr) {
-									state_race_bd = [];
-									for (race in races) {
-										var status_per_race = [];
-										for (status in armed_stati) {
-											var filtered = instances.filter(function(d, i) { return (d.armed === armed_stati[status]) && (d.race === races[race]) && (d.state === state_abbr[state]) });
-											status_per_race.push(filtered.length);
-										}
-										var total = status_per_race.reduce(function(a, b) {return a + b;});
-										if (total > 0) {
-											status_per_race = status_per_race.map(x => parseFloat(x) / total); // normalization
-										}
-										state_race_bd.push(status_per_race);
-									}
-									//states_spider_data.push(({ state_ab: state_abbr[state],
-									//						  black: state_race_bd[0],
-									//						  hispanic: state_race_bd[1],
-									//						  native: state_race_bd[2],
-									//						  asian: state_race_bd[3],
-									//						  pacific: state_race_bd[4],
-									//						  white: state_race_bd[5],
-									//						  unknown: state_race_bd[6]}));
-									states_spider_data.push(({ state_ab: state_abbr[state], race_data: state_race_bd }));
-								}
-								
-								// SPIDER GRAPH CONSTRUCTION
-																
-								var reverse_spider_scale = d3.scaleLinear()
-													.domain([0, 1])
-													.range([0, -(150-spider_padding)]);
-								var spider_scale = d3.scaleLinear()
-													.domain([0, 1])
-													.range([0, 150-spider_padding]);
-													
-								var vis_scale = d3.scaleLinear()
-													.domain([0, 1])
-													.range([0, 150-spider_padding]);
-								var vis_scale_reverse = d3.scaleLinear()
-													.domain([1, 0])
-													.range([-(150-spider_padding), 0]);
-													
-								
-								var percent = d3.format(".0%");
-								var yAxis = d3.axisRight(vis_scale)
-												.tickFormat(percent)
-												.ticks(3);
-								var yAxis_rev = d3.axisRight(vis_scale_reverse)
-												.tickFormat(percent)
-												.tickValues([0.5, 1]);
-								var xAxis = d3.axisBottom(vis_scale)
-												.tickFormat(percent)
-												.ticks(3);
-								
-													
-								//var vert_ax = spider_svg.append("g")
-								//						.attr("class", "axis")
-								//						.attr("transform", "translate(150, 150)")
-								//						.call(yAxis);
-								var vert_ax_rev = spider_svg.append("g")
-														.attr("class", "axis")
-														.attr("transform", "translate(150, 150)")
-														.call(yAxis_rev);
-								var x_right_ax = spider_svg.append("line")
-														.style("stroke", "black")
-														.style("stroke-width", 1)
-														.style("shape-rendering", "crispEdges")
-														.attr("x1", 150)
-														.attr("y1", 150)
-														.attr("x2", 300-spider_padding)
-														.attr("y2", 150);
-								var x_left_ax = spider_svg.append("line")
-														.style("stroke", "black")
-														.style("stroke-width", 1)
-														.style("shape-rendering", "crispEdges")
-														.attr("x1", 150)
-														.attr("y1", 150)
-														.attr("x2", spider_padding)
-														.attr("y2", 150);
-								var y_bottom_ax = spider_svg.append("line")
-														.style("stroke", "black")
-														.style("stroke-width", 1)
-														.style("shape-rendering", "crispEdges")
-														.attr("x1", 150)
-														.attr("y1", 150)
-														.attr("x2", 150)
-														.attr("y2", 300-spider_padding);
-														
-								var armed_txt = spider_svg.append("text")
-														.attr("x", 150-38.75)
-														.attr("y", spider_padding/2.0)
-														.attr("class", "spider-label")
-														.text("Allegedly Armed");
-														
-								var unclear_txt = spider_svg.append("text")
-														.attr("x", 300-(spider_padding/2.0))
-														.attr("y", 150-20)
-														.attr("class", "spider-label")
-														.attr("id", "right-vert")
-														.text("Unclear");
-														
-								var vehicle_txt = spider_svg.append("text")
-														.attr("x", -(spider_padding/2.0))
-														.attr("y", -(150+17.5))
-														.attr("class", "spider-label")
-														.attr("id", "left-vert")
-														.text("Vehicle")
-														.attr("transform", "rotate(-180)");
-														
-								var unarmed_txt = spider_svg.append("text")
-														.attr("x", 150-22.5)
-														.attr("y", 300-(spider_padding/2.0))
-														.attr("class", "spider-label")
-														.text("Unarmed");
-														
-								var race_polygons = spider_svg.selectAll("polygon")
-														.data(states_spider_data[0].race_data)
-														.enter()
-														.append("polygon")
-														.attr("class", "spider-polygon")
-														.style("stroke-width", 1)
-														.style("stroke", function(d, i) {
-															return colors(i);
-														})
-														//.data(function(d) { return [d]; })
-														.attr("points", function(d) {
-															// d is per race, so the array of values
-															points_str = 150+","+(150+reverse_spider_scale(d[0]))+" "+
-																		 (150+reverse_spider_scale(d[2]))+","+150+" "+
-																		 150+","+(150+spider_scale(d[1]))+" "+
-																		 (150+spider_scale(d[3]))+","+150;
-															return points_str;
-														})
-														.attr("fill", function(d, i) {
-															return colors(i);
-														})
-														.attr("fill-opacity", 0.25);
-														
-								var race_group = spider_svg.selectAll("g.race-group")
-														.data(states_spider_data[0].race_data)
-														.enter()
-														.append("g")
-														.attr("class", "race-group")
-														.style("fill", function(d, i) {
-															return colors(i);
-														});
-														
-								var race_points = race_group.selectAll("circle")
-														.data(function(d) { return d; })
-														.enter()
-														.append("circle")
-														.attr("r", 2.5)
-														.attr("cx", function(d, i) {
-															if (i == 0 || i == 1) {
-																return 150;
-															}
-															else if (i == 2) { return 150+reverse_spider_scale(d); }
-															else if (i == 3) { return 150+spider_scale(d); }
-														})
-														.attr ("cy", function(d, i) {
-															if (i == 2 || i == 3) {
-																return 150;
-															}
-															else if (i == 0) { return 150+reverse_spider_scale(d); }
-															else if (i == 1) { return 150+spider_scale(d); }
-														});
-								var spider_legend = spider_div.append("svg")
-															.attr("width", 300)
-															.attr("height", 70);
-								for (race in races) {
-									spider_legend.append("rect")
-												.attr("width", 12)
-												.attr("height", 12)
-												.attr("x", 20+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
-												.attr("y", 0+(parseInt(race/3)*20))
-												.style("stroke", "black")
-												.style("stroke-width", "1")
-												.style("shape-rendering", "crispEdges")
-												.attr("fill", colors(races[race]));
-									spider_legend.append("text")
-												.attr("x", 40+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
-												.attr("y", 10+(parseInt(race/3)*20))
-												.attr("fill", "black")
-												.attr("class", "spider-label")
-												.text(races[race]);
-								}
-								
-								// BAR GRAPH
-								
+                        
+        // MAP SVG INITIALIZATION
+                        
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", 1000)
+                    .attr("height", 500);
+                    
+        
+        var loading_txt = svg.append("text")
+                            .attr("x", 350)
+                            .attr("y", 250)
+                            .attr("class", "loading")
+                            .text("LOADING...");
+                    
+        var map_container = svg.append("g");
+        
+        // OPTION DROPDOWN
+        //var state_descriptor = d3.select("body")
+        //                  .append("foreignObject")
+        //                  .html("<p>State Chart Type &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Police Department Chart Type");
+                            //.append("p")
+                            //.text("State Chart Type")
+                            //.append("b")
+                            //.style("word-space", "2em")
+        //var pd_descriptor = d3.select("p")
+        //                  .append("div")
+        //                  .text("Police Department Chart Type");
+        var state_chart_types = ["Races: Breakdown and Armed vs. Unarmed", "City-Level Police Violence on Black People", "Police Violence Within State Black Population"];
+        //var pd_chart_types = ["Police Kill Rates per Race", "Police Violence on Black Mortality Rate"];
+        var state_chart_name = state_chart_types[0];
+        //var pd_chart_name = pd_chart_types[0];
+        var selector_p = d3.select("body")
+                        .append("p")
+                        .attr("class", "selectors")
+        var state_selector = selector_p.append("div")
+                                            .attr("class", "state_select_div")
+                                            .text("State Chart Type")
+                                            .append("p")
+                                            .append("select")
+                                            .attr("class", "select")
+                                            .property("disabled", true);
+        selector_p.append("div").attr("class", "space");
+        /*
+        var pd_selector = selector_p.append("div")
+                                            .attr("class", "pd_select_div")
+                                            .text("Police Department Chart Type")
+                                            .append("p")
+                                            .append("select")
+                                            .attr("class", "select")
+                                            .property("disabled", true);
+        */
+        state_selector.on("change", function(event) {
+            state_chart_name = state_selector.property("value");
+        });
+        /*
+        pd_selector.on("change", function(event) {
+            pd_chart_name = pd_selector.property("value");
+            console.log(pd_chart_name);
+        });
+        */
+        var state_options = state_selector.selectAll("option")
+                            .data(state_chart_types)
+                            .enter()
+                            .append("option")
+                            .text(function(d) { return d; });
+        /*
+        var pd_options = pd_selector.selectAll("option")
+                            .data(pd_chart_types)
+                            .enter()
+                            .append("option")
+                            .text(function(d) { return d; });
+        */
+        
+        // LOADING AND USING DATA
+                    
+        d3.json("https://d3js.org/us-10m.v1.json")
+            .then(function(json) {
+                d3.csv("../data/killingsbystate.csv")
+                    .then(function(csv) {
+                        // SPIDER GRAPH AND MAP DATA
+                        var totals = Array.from(csv, x => ({ total: parseFloat(x["# People Killed"])/parseInt(x["Total Population"].replace(/,/g, "")),
+                                                            pop: parseInt(x["Total Population"].replace(/,/g, "")),
+                                                            name: x["State"],
+                                                            abbr: x["State Abbreviation"],
+                                                            black: parseInt(x["# Black people killed"])/parseFloat(x["# People Killed"]),
+                                                            hispanic: parseInt(x["# Hispanic people killed"])/parseFloat(x["# People Killed"]),
+                                                            native: parseInt(x["# Native American people killed"])/parseFloat(x["# People Killed"]),
+                                                            asian: parseInt(x["# Asian people killed"])/parseFloat(x["# People Killed"]),
+                                                            pacific: parseInt(x["# Pacific Islanders killed"])/parseFloat(x["# People Killed"]),
+                                                            white: parseInt(x["# White people killed"])/parseFloat(x["# People Killed"]),
+                                                            unknown: parseInt(x["# Unknown Race people killed"])/parseFloat(x["# People Killed"])
+                                                            }));
+                        var stateScale = d3.scaleLinear()
+                                             //.exponent(0.4)
+                                             .domain([0, d3.max(totals, function(d) { return d.total; })])
+                                             .range(["#ffffff", "#0a4a7d"]);
+                        var stateScale_numerical = d3.scaleLinear()
+                                             //.exponent(0.4)
+                                             .domain(stateScale.domain())
+                                             .range([0, 300]);
+                                    
+                        var stack = d3.stack()
+                                        .keys(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
+                                        .order(d3.stackOrderDescending);
+                        var stacked_totals = stack(totals);
+                        
+                        var barXScale = d3.scaleLinear()
+                                            .domain([0, 1])
+                                            .range([0, 300])
+                                            
+                        var colors = d3.scaleOrdinal()
+                                        .domain(["black", "hispanic", "native", "asian", "pacific", "white", "unknown"])
+                                        .range(["#006ba4", "#595959", "#ffbc79", "#5f9ed1", "#a2c8ec", "#ff800e", "#ababab"]);
+                                        
+                        
+                        // SPIDER TOOLTIP SIDEWAYS BAR
+                        
+                        var bar_group = bar_svg.selectAll("g")
+                                        .data(stack([totals[9]]))
+                                        .enter()
+                                        .append("g")
+                                        .style("fill", function(d, i) {
+                                            return colors(i);
+                                        });
+                        var bar_stack = bar_group.selectAll("rect")
+                                            .data(function(d) { return d; })
+                                            .enter()
+                                            .append("rect")
+                                            .attr("x", function(d) {
+                                                return Math.ceil(barXScale(d[0]));
+                                            })
+                                            .attr("y", 0)
+                                            .attr("height", 20)
+                                            .attr("width", function(d) {
+                                                return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
+                                            });
+                        
+                                        
+                        //var ids = Array.from(topojson.feature(json, json.objects.states).features, x => x["id"]);
+                        
+                        var features = topojson.feature(json, json.objects.states).features;
+                        features.sort((a, b) => (parseInt(a["id"]) < parseInt(b["id"])) ? -1 : 1);
+                        // SPIDER GRAPH DATA PROCESSING
+                        d3.csv("../data/policekillings.csv")
+                            .then(function(csv_pk){
+                                var instances = Array.from(csv_pk, x => ({ race: x["Victim's race"],
+                                                                        state: x["State"],
+                                                                        armed: x["Armed/Unarmed Status"]
+                                                                     }));
+                                var state_abbr = Array.from(csv, x => x["State Abbreviation"]);
+                                var states_spider_data = [];
+                                var armed_stati = ["Allegedly Armed", "Unarmed/Did Not Have Actual Weapon", "Vehicle", "Unclear"];
+                                var races = ["Black", "Hispanic", "Native American", "Asian", "Pacific Islander", "White", "Unknown race"];
+                                for (state in state_abbr) {
+                                    state_race_bd = [];
+                                    for (race in races) {
+                                        var status_per_race = [];
+                                        for (status in armed_stati) {
+                                            var filtered = instances.filter(function(d, i) { return (d.armed === armed_stati[status]) && (d.race === races[race]) && (d.state === state_abbr[state]) });
+                                            status_per_race.push(filtered.length);
+                                        }
+                                        var total = status_per_race.reduce(function(a, b) {return a + b;});
+                                        if (total > 0) {
+                                            status_per_race = status_per_race.map(x => parseFloat(x) / total); // normalization
+                                        }
+                                        state_race_bd.push(status_per_race);
+                                    }
+                                    //states_spider_data.push(({ state_ab: state_abbr[state],
+                                    //                        black: state_race_bd[0],
+                                    //                        hispanic: state_race_bd[1],
+                                    //                        native: state_race_bd[2],
+                                    //                        asian: state_race_bd[3],
+                                    //                        pacific: state_race_bd[4],
+                                    //                        white: state_race_bd[5],
+                                    //                        unknown: state_race_bd[6]}));
+                                    states_spider_data.push(({ state_ab: state_abbr[state], race_data: state_race_bd }));
+                                }
+                                
+                                // SPIDER GRAPH CONSTRUCTION
+                                                                
+                                var reverse_spider_scale = d3.scaleLinear()
+                                                    .domain([0, 1])
+                                                    .range([0, -(150-spider_padding)]);
+                                var spider_scale = d3.scaleLinear()
+                                                    .domain([0, 1])
+                                                    .range([0, 150-spider_padding]);
+                                                    
+                                var vis_scale = d3.scaleLinear()
+                                                    .domain([0, 1])
+                                                    .range([0, 150-spider_padding]);
+                                var vis_scale_reverse = d3.scaleLinear()
+                                                    .domain([1, 0])
+                                                    .range([-(150-spider_padding), 0]);
+                                                    
+                                
+                                var percent = d3.format(".0%");
+                                var yAxis = d3.axisRight(vis_scale)
+                                                .tickFormat(percent)
+                                                .ticks(3);
+                                var yAxis_rev = d3.axisRight(vis_scale_reverse)
+                                                .tickFormat(percent)
+                                                .tickValues([0.5, 1]);
+                                var xAxis = d3.axisBottom(vis_scale)
+                                                .tickFormat(percent)
+                                                .ticks(3);
+                                
+                                                    
+                                //var vert_ax = spider_svg.append("g")
+                                //                      .attr("class", "axis")
+                                //                      .attr("transform", "translate(150, 150)")
+                                //                      .call(yAxis);
+                                var vert_ax_rev = spider_svg.append("g")
+                                                        .attr("class", "axis")
+                                                        .attr("transform", "translate(150, 150)")
+                                                        .call(yAxis_rev);
+                                var x_right_ax = spider_svg.append("line")
+                                                        .style("stroke", "black")
+                                                        .style("stroke-width", 1)
+                                                        .style("shape-rendering", "crispEdges")
+                                                        .attr("x1", 150)
+                                                        .attr("y1", 150)
+                                                        .attr("x2", 300-spider_padding)
+                                                        .attr("y2", 150);
+                                var x_left_ax = spider_svg.append("line")
+                                                        .style("stroke", "black")
+                                                        .style("stroke-width", 1)
+                                                        .style("shape-rendering", "crispEdges")
+                                                        .attr("x1", 150)
+                                                        .attr("y1", 150)
+                                                        .attr("x2", spider_padding)
+                                                        .attr("y2", 150);
+                                var y_bottom_ax = spider_svg.append("line")
+                                                        .style("stroke", "black")
+                                                        .style("stroke-width", 1)
+                                                        .style("shape-rendering", "crispEdges")
+                                                        .attr("x1", 150)
+                                                        .attr("y1", 150)
+                                                        .attr("x2", 150)
+                                                        .attr("y2", 300-spider_padding);
+                                                        
+                                var armed_txt = spider_svg.append("text")
+                                                        .attr("x", 150-38.75)
+                                                        .attr("y", spider_padding/2.0)
+                                                        .attr("class", "spider-label")
+                                                        .text("Allegedly Armed");
+                                                        
+                                var unclear_txt = spider_svg.append("text")
+                                                        .attr("x", 300-(spider_padding/2.0))
+                                                        .attr("y", 150-20)
+                                                        .attr("class", "spider-label")
+                                                        .attr("id", "right-vert")
+                                                        .text("Unclear");
+                                                        
+                                var vehicle_txt = spider_svg.append("text")
+                                                        .attr("x", -(spider_padding/2.0))
+                                                        .attr("y", -(150+17.5))
+                                                        .attr("class", "spider-label")
+                                                        .attr("id", "left-vert")
+                                                        .text("Vehicle")
+                                                        .attr("transform", "rotate(-180)");
+                                                        
+                                var unarmed_txt = spider_svg.append("text")
+                                                        .attr("x", 150-22.5)
+                                                        .attr("y", 300-(spider_padding/2.0))
+                                                        .attr("class", "spider-label")
+                                                        .text("Unarmed");
+                                                        
+                                var race_polygons = spider_svg.selectAll("polygon")
+                                                        .data(states_spider_data[0].race_data)
+                                                        .enter()
+                                                        .append("polygon")
+                                                        .attr("class", "spider-polygon")
+                                                        .style("stroke-width", 1)
+                                                        .style("stroke", function(d, i) {
+                                                            return colors(i);
+                                                        })
+                                                        //.data(function(d) { return [d]; })
+                                                        .attr("points", function(d) {
+                                                            // d is per race, so the array of values
+                                                            points_str = 150+","+(150+reverse_spider_scale(d[0]))+" "+
+                                                                         (150+reverse_spider_scale(d[2]))+","+150+" "+
+                                                                         150+","+(150+spider_scale(d[1]))+" "+
+                                                                         (150+spider_scale(d[3]))+","+150;
+                                                            return points_str;
+                                                        })
+                                                        .attr("fill", function(d, i) {
+                                                            return colors(i);
+                                                        })
+                                                        .attr("fill-opacity", 0.25);
+                                                        
+                                var race_group = spider_svg.selectAll("g.race-group")
+                                                        .data(states_spider_data[0].race_data)
+                                                        .enter()
+                                                        .append("g")
+                                                        .attr("class", "race-group")
+                                                        .style("fill", function(d, i) {
+                                                            return colors(i);
+                                                        });
+                                                        
+                                var race_points = race_group.selectAll("circle")
+                                                        .data(function(d) { return d; })
+                                                        .enter()
+                                                        .append("circle")
+                                                        .attr("r", 2.5)
+                                                        .attr("cx", function(d, i) {
+                                                            if (i == 0 || i == 1) {
+                                                                return 150;
+                                                            }
+                                                            else if (i == 2) { return 150+reverse_spider_scale(d); }
+                                                            else if (i == 3) { return 150+spider_scale(d); }
+                                                        })
+                                                        .attr ("cy", function(d, i) {
+                                                            if (i == 2 || i == 3) {
+                                                                return 150;
+                                                            }
+                                                            else if (i == 0) { return 150+reverse_spider_scale(d); }
+                                                            else if (i == 1) { return 150+spider_scale(d); }
+                                                        });
+                                var spider_legend = spider_div.append("svg")
+                                                            .attr("width", 300)
+                                                            .attr("height", 70);
+                                for (race in races) {
+                                    spider_legend.append("rect")
+                                                .attr("width", 12)
+                                                .attr("height", 12)
+                                                .attr("x", 20+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
+                                                .attr("y", 0+(parseInt(race/3)*20))
+                                                .style("stroke", "black")
+                                                .style("stroke-width", "1")
+                                                .style("shape-rendering", "crispEdges")
+                                                .attr("fill", colors(races[race]));
+                                    spider_legend.append("text")
+                                                .attr("x", 40+(race*86)-(parseInt(race/3)*258)+(parseInt(race/6)*66)-(race%3==1 ? 20 : 0))
+                                                .attr("y", 10+(parseInt(race/3)*20))
+                                                .attr("fill", "black")
+                                                .attr("class", "spider-label")
+                                                .text(races[race]);
+                                }
+                                
+                                // BAR GRAPH
+                                
 
-								var data_obj = Array.from(csv_pk, x => ({ race: x["Victim's race"],
-																		city: x["City"],
-																		state: x["State"]					
-								}));
-								
+                                var data_obj = Array.from(csv_pk, x => ({ race: x["Victim's race"],
+                                                                        city: x["City"],
+                                                                        state: x["State"]                   
+                                }));
+                                
 
-								var state_obj = {};
-								data_obj.forEach((i) => {
-									
-									if (!state_obj[i.state]){
-										var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
-										var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
-										state_obj[i.state] = [{city: i.city, bKill: bTotal, allKill: aTotal}];
-									}
-									else {
-										if (state_obj[i.state].filter(a => a.city === i.city).length === 0){
-											var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
-											var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
-											state_obj[i.state].push({city: i.city, bKill: bTotal, allKill: aTotal - bTotal});
-										}
-									}
-									
-								});
-								
-								var state = "GA";
-								
-								for (var i in state_obj) {
-									state_obj[i].sort((a, b) => {
-										return b.bKill - a.bKill;
-									});
-									state_obj[i] = state_obj[i].slice(0,10);
-								}
-					  
-								var range = state_obj[state][0].bKill;
-								
-								for (var i in state_obj) {
-									state_obj[i].sort((a, b) => {
-										return b.allKill - a.allKill;
-									});
-									state_obj[i] = state_obj[i].slice(0,10);
-								}
-								var range2 = state_obj[state][0].allKill;
-							
+                                var state_obj = {};
+                                data_obj.forEach((i) => {
+                                    
+                                    if (!state_obj[i.state]){
+                                        var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
+                                        var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
+                                        state_obj[i.state] = [{city: i.city, bKill: bTotal, allKill: aTotal}];
+                                    }
+                                    else {
+                                        if (state_obj[i.state].filter(a => a.city === i.city).length === 0){
+                                            var bTotal = data_obj.filter(function(d, j) { return (d.race === "Black" && d.city === i.city && d.city !== ""); }).length;
+                                            var aTotal = data_obj.filter(function(d, j) { return (d.city === i.city && d.city !== ""); }).length;
+                                            state_obj[i.state].push({city: i.city, bKill: bTotal, allKill: aTotal - bTotal});
+                                        }
+                                    }
+                                    
+                                });
+                                
+                                var state = "GA";
+                                
+                                for (var i in state_obj) {
+                                    state_obj[i].sort((a, b) => {
+                                        return b.bKill - a.bKill;
+                                    });
+                                    state_obj[i] = state_obj[i].slice(0,10);
+                                }
+                      
+                                var range = state_obj[state][0].bKill;
+                                
+                                for (var i in state_obj) {
+                                    state_obj[i].sort((a, b) => {
+                                        return b.allKill - a.allKill;
+                                    });
+                                    state_obj[i] = state_obj[i].slice(0,10);
+                                }
+                                var range2 = state_obj[state][0].allKill;
+                            
 
-								var range3 = range + range2;
-								var city = [];
+                                var range3 = range + range2;
+                                var city = [];
 
-								for (var i in state_obj[state]){
-									city.push(state_obj[state][i].city);
-								}
-								
-								
+                                for (var i in state_obj[state]){
+                                    city.push(state_obj[state][i].city);
+                                }
+                                
+                                
 
-								var xScale = d3.scaleLinear().domain([0,10]).range([20,480]);
+                                var xScale = d3.scaleLinear().domain([0,10]).range([20,480]);
 
-								var yScale = d3.scaleLinear().domain([0,range3]).range([480,20]);
-								var heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480]);
+                                var yScale = d3.scaleLinear().domain([0,range3]).range([480,20]);
+                                var heightScale = d3.scaleLinear().domain([0,range3]).range([20, 480]);
 
-								var kill = ["bKill", "allKill"];
-								var colorScale = d3.scaleOrdinal().domain(kill).range(["#5f9ed1", "#ff800e"]);
+                                var kill = ["bKill", "allKill"];
+                                var colorScale = d3.scaleOrdinal().domain(kill).range(["#5f9ed1", "#ff800e"]);
 
-								var yAxis_bar = d3.axisLeft().scale(yScale)
-										.tickSize(-500);
+                                var yAxis_bar = d3.axisLeft().scale(yScale)
+                                        .tickSize(-500);
 
-								var yax_g = bar_svg2.append("g")
-									.attr("class", "yAxis")
-									.call(yAxis_bar)
-									.attr("transform", "translate(20, 0)");
-								
-								var xAxis_bar = d3.axisBottom()
-									.scale(xScale)
-									.tickFormat(function(d, i) { 
-										// return city[i]; 
-										if (i!== 0) 
-											return city[i-1]; 
-										else return "";
-									})
-									.tickSize(-500);
-								
-								var xax_g = bar_svg2.append("g")
-									.attr("class", "xAxis")
-									.call(xAxis_bar)
-									.attr("transform", "translate(0, 480)")
-									.selectAll("text")
-									.style("text-anchor", "end")
-									.attr("dx", "-.8em")
-									.attr("dy", ".15em")
-									.attr("transform", "rotate(-65)" );
-									
-								var stackLayout = d3.stack()
-									.keys(kill);
+                                var yax_g = bar_svg2.append("g")
+                                    .attr("class", "yAxis")
+                                    .call(yAxis_bar)
+                                    .attr("transform", "translate(20, 0)");
+                                
+                                var xAxis_bar = d3.axisBottom()
+                                    .scale(xScale)
+                                    .tickFormat(function(d, i) { 
+                                        // return city[i]; 
+                                        if (i!== 0) 
+                                            return city[i-1]; 
+                                        else return "";
+                                    })
+                                    .tickSize(-500);
+                                
+                                var xax_g = bar_svg2.append("g")
+                                    .attr("class", "xAxis")
+                                    .call(xAxis_bar)
+                                    .attr("transform", "translate(0, 480)")
+                                    .selectAll("text")
+                                    .style("text-anchor", "end")
+                                    .attr("dx", "-.8em")
+                                    .attr("dy", ".15em")
+                                    .attr("transform", "rotate(-65)" );
+                                    
+                                var stackLayout = d3.stack()
+                                    .keys(kill);
 
-								
-								var barGroups2 = bar_svg2.selectAll("g.bar")
-									.data(stackLayout(state_obj[state])) // Pass the sorted data in
-									.enter()
-									.append("g")
-									.attr("class", "bar")
-									.style("fill", function(d) { return colorScale(d.key); });
-								
-								var bars2 =	barGroups2.selectAll("rect") 
-											.data(function(d) { return d; })
-											.enter()
-											.append("rect")
-											.attr("width", 40)
-											.attr("height", p => heightScale(p[1]) - heightScale(p[0]))
-											.attr("x", (p, i) => xScale(i) + 25)
-											.attr("y", p => yScale(p[1]));
-											
-								// VENN DIAGRAM CONSTRUCTION
-								
-								var data_obj_venn = Array.from(csv, x => ({ state: x["State Abbreviation"],
-												black: x["Black Population"],
+                                
+                                var barGroups2 = bar_svg2.selectAll("g.bar")
+                                    .data(stackLayout(state_obj[state])) // Pass the sorted data in
+                                    .enter()
+                                    .append("g")
+                                    .attr("class", "bar")
+                                    .style("fill", function(d) { return colorScale(d.key); });
+                                
+                                var bars2 = barGroups2.selectAll("rect") 
+                                            .data(function(d) { return d; })
+                                            .enter()
+                                            .append("rect")
+                                            .attr("width", 40)
+                                            .attr("height", p => heightScale(p[1]) - heightScale(p[0]))
+                                            .attr("x", (p, i) => xScale(i) + 25)
+                                            .attr("y", p => yScale(p[1]));
+                                            
+                                // VENN DIAGRAM CONSTRUCTION
+                                
+                                var data_obj_venn = Array.from(csv, x => ({ state: x["State Abbreviation"],
+                                                black: x["Black Population"],
                                                 bkill: x["# Black people killed"],
                                                 tkill: x["# People Killed"]
                                                 
-									}));
-								state = "AL"
-								var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
+                                    }));
+                                state = "AL"
+                                var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
 
-								var black = parseInt(b.black.split(',').join("")) > 20000?  parseInt(b.black.split(',').join(""))/100: parseInt(b.black.split(',').join(""))/10; 
-								var sets = [
-											{sets: ["Black Population"], figure: black, label: "Black Population: " + b.black, size: black},
-											{sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
-											{sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
-											];
+                                var black = parseInt(b.black.split(',').join("")) > 20000?  parseInt(b.black.split(',').join(""))/100: parseInt(b.black.split(',').join(""))/10; 
+                                var sets = [
+                                            {sets: ["Black Population"], figure: black, label: "Black Population: " + b.black, size: black},
+                                            {sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
+                                            {sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
+                                            ];
 
 
-								var chart = venn.VennDiagram()
-									.width(600)
-									.height(400);
+                                var chart = venn.VennDiagram()
+                                    .width(600)
+                                    .height(400);
 
-								d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
-								var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
-								venn_div_inner.selectAll("text")
-										.style("fill", "black")
-										.style("font-size", "13px");
-								venn_div_inner.selectAll(".venn-circle path")
-										.style("fill-opacity", .8)
-										.style("stroke-width", 1)
-										.style("stroke-opacity", 1)
-										.style("stroke", "fff");
-											
+                                d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
+                                var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
+                                venn_div_inner.selectAll("text")
+                                        .style("fill", "black")
+                                        .style("font-size", "13px");
+                                venn_div_inner.selectAll(".venn-circle path")
+                                        .style("fill-opacity", .8)
+                                        .style("stroke-width", 1)
+                                        .style("stroke-opacity", 1)
+                                        .style("stroke", "fff");
+                                            
 
-								var tooltip = d3.select("#venn_one").append("div")
-									.attr("class", "venntooltip");
+                                var tooltip = d3.select("#venn_one").append("div")
+                                    .attr("class", "venntooltip");
 
-								
-								var x = venn.x_re_f()
-								var y = venn.y_re_f()
-							
-								// .attr("width", 400).attr("height", 400);
-								venn_div.select("svg").append('line')
-											.attr("x1", x)
-											.attr("x2", x)
-											.attr("y1", y)
-											.attr("y2", y-150)
-											.style("stroke", "black");
-								venn_div.select("svg").append('text')
-											// .attr("x1", x)
-											.attr("x", x-65)
-											// .attr("y1", y)
-											.attr("y", y-152)
-											.text("Black People Killed: " + b.bkill)
-											.attr("font-size", "15px")
-											.attr("fill", "black");
-											
-								
-								// MAP CONSTRUCTION
-							
-								map_container.selectAll("path")
-									.data(features)
-									.enter()
-									.append("path")
-									.attr("d", d3.geoPath(d3.geoTransform({
-										point: function(x, y) {
-											this.stream.point(x * 0.75 + (svg.attr("width")*0.125), y * 0.75);
-										}
-									})))
-									.style("stroke", "#002760")
-									.style("stroke-width", "1")
-									.data(totals)
-									.style("fill", function(d) {
-										return stateScale(d.total);
-									})
-									.on("mouseover", function(event, d) {
-										d3.select(event.currentTarget).style("fill", "#222222").style("stroke", "white").style("stroke-width", "2px");
-										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 1); }
-										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 1); }
-										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 1); }
-										this.parentNode.appendChild(this);
-									})
-									.on("mousemove", function(event, d) {
-										var mouse_pos = d3.pointer(event, svg);
-										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") {
-											spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											spider_div.selectAll("h1").text(d.name.toUpperCase());
-											var state_bar = stack([d]);
-											bar_group.data(state_bar).enter();
-											bar_group.selectAll("rect")
-													.data(function(d) { return d; })
-													.transition()
-													.duration(1)
-													.attr("x", function(d) {
-														return Math.ceil(barXScale(d[0]));
-													})
-													.attr("width", function(d) {
-														return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
-													});
-											//console.log(states_spider_data[4].state_ab === d.abbr);
-											//console.log(states_spider_data.filter(function(statum, i) { return statum.state_ab === d.abbr; }));
-											var new_race_data = states_spider_data.filter(function(data) { return data.state_ab === d.abbr; })[0].race_data;
-											race_group.data(new_race_data).enter();
-											race_polygons.data(new_race_data).enter()
-											spider_svg.selectAll("polygon")
-														.transition()
-														.duration(1)
-														.attr("points", function(d) {
-															// d is per race, so the array of values
-															points_str = 150+","+(150+reverse_spider_scale(d[0]))+" "+
-																		 (150+reverse_spider_scale(d[2]))+","+150+" "+
-																		 150+","+(150+spider_scale(d[1]))+" "+
-																		 (150+spider_scale(d[3]))+","+150;
-															return points_str;
-														})
-														.attr("fill", function(d, i) {
-															return colors(i);
-														})
-														.attr("fill-opacity", 0.25);
-											race_group.selectAll("circle")
-													.data(function(d) { return d; })
-													.transition()
-													.duration(1)
-													.attr("cx", function(d, i) {
-														if (i == 0 || i == 1) {
-															return 150;
-														}
-														else if (i == 2) { return 150+reverse_spider_scale(d); }
-														else if (i == 3) { return 150+spider_scale(d); }
-													})
-													.attr ("cy", function(d, i) {
-														if (i == 2 || i == 3) {
-															return 150;
-														}
-														else if (i == 0) { return 150+reverse_spider_scale(d); }
-														else if (i == 1) { return 150+spider_scale(d); }
-													});
-										}
-										else if (state_chart_name == "City-Level Police Violence on Black People") {
-											// BAR GRAPH
-											state = d.abbr;
-											// divBarDot.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											// bar_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											divBarDot.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
-											bar_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
-											bar_div.selectAll("h1").text(d.name.toUpperCase());
-								  
-											range = state_obj[state][0].bKill;
-											
-											range2 = state_obj[state][0].allKill;
-										
-											range3 = range + range2;
-											city = [];
+                                
+                                var x = venn.x_re_f()
+                                var y = venn.y_re_f()
+                            
+                                // .attr("width", 400).attr("height", 400);
+                                venn_div.select("svg").append('line')
+                                            .attr("x1", x)
+                                            .attr("x2", x)
+                                            .attr("y1", y)
+                                            .attr("y2", y-150)
+                                            .style("stroke", "black");
+                                venn_div.select("svg").append('text')
+                                            // .attr("x1", x)
+                                            .attr("x", x-65)
+                                            // .attr("y1", y)
+                                            .attr("y", y-152)
+                                            .text("Black People Killed: " + b.bkill)
+                                            .attr("font-size", "15px")
+                                            .attr("fill", "black");
+                                            
+                                
+                                // MAP CONSTRUCTION
+                            
+                                map_container.selectAll("path")
+                                    .data(features)
+                                    .enter()
+                                    .append("path")
+                                    .attr("d", d3.geoPath(d3.geoTransform({
+                                        point: function(x, y) {
+                                            this.stream.point(x * 0.75 + (svg.attr("width")*0.125), y * 0.75);
+                                        }
+                                    })))
+                                    .style("stroke", "#002760")
+                                    .style("stroke-width", "1")
+                                    .data(totals)
+                                    .style("fill", function(d) {
+                                        return stateScale(d.total);
+                                    })
+                                    .on("mouseover", function(event, d) {
+                                        d3.select(event.currentTarget).style("fill", "#222222").style("stroke", "white").style("stroke-width", "2px");
+                                        if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 1); }
+                                        else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 1); }
+                                        else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 1); }
+                                        this.parentNode.appendChild(this);
+                                    })
+                                    .on("mousemove", function(event, d) {
+                                        var mouse_pos = d3.pointer(event, svg);
+                                        if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") {
+                                            // spider_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+                                            spider_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
+                                            spider_div.selectAll("h1").text(d.name.toUpperCase());
+                                            var state_bar = stack([d]);
+                                            bar_group.data(state_bar).enter();
+                                            bar_group.selectAll("rect")
+                                                    .data(function(d) { return d; })
+                                                    .transition()
+                                                    .duration(1)
+                                                    .attr("x", function(d) {
+                                                        return Math.ceil(barXScale(d[0]));
+                                                    })
+                                                    .attr("width", function(d) {
+                                                        return Math.ceil(barXScale(d[1]) - barXScale(d[0]));
+                                                    });
+                                            //console.log(states_spider_data[4].state_ab === d.abbr);
+                                            //console.log(states_spider_data.filter(function(statum, i) { return statum.state_ab === d.abbr; }));
+                                            var new_race_data = states_spider_data.filter(function(data) { return data.state_ab === d.abbr; })[0].race_data;
+                                            race_group.data(new_race_data).enter();
+                                            race_polygons.data(new_race_data).enter()
+                                            spider_svg.selectAll("polygon")
+                                                        .transition()
+                                                        .duration(1)
+                                                        .attr("points", function(d) {
+                                                            // d is per race, so the array of values
+                                                            points_str = 150+","+(150+reverse_spider_scale(d[0]))+" "+
+                                                                         (150+reverse_spider_scale(d[2]))+","+150+" "+
+                                                                         150+","+(150+spider_scale(d[1]))+" "+
+                                                                         (150+spider_scale(d[3]))+","+150;
+                                                            return points_str;
+                                                        })
+                                                        .attr("fill", function(d, i) {
+                                                            return colors(i);
+                                                        })
+                                                        .attr("fill-opacity", 0.25);
+                                            race_group.selectAll("circle")
+                                                    .data(function(d) { return d; })
+                                                    .transition()
+                                                    .duration(1)
+                                                    .attr("cx", function(d, i) {
+                                                        if (i == 0 || i == 1) {
+                                                            return 150;
+                                                        }
+                                                        else if (i == 2) { return 150+reverse_spider_scale(d); }
+                                                        else if (i == 3) { return 150+spider_scale(d); }
+                                                    })
+                                                    .attr ("cy", function(d, i) {
+                                                        if (i == 2 || i == 3) {
+                                                            return 150;
+                                                        }
+                                                        else if (i == 0) { return 150+reverse_spider_scale(d); }
+                                                        else if (i == 1) { return 150+spider_scale(d); }
+                                                    });
+                                        }
+                                        else if (state_chart_name == "City-Level Police Violence on Black People") {
+                                            // BAR GRAPH
+                                            state = d.abbr;
+                                            divBarDot.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
+                                            bar_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
+                                            bar_div.selectAll("h1").text(d.name.toUpperCase());
+                                  
+                                            range = state_obj[state][0].bKill;
+                                            
+                                            range2 = state_obj[state][0].allKill;
+                                        
+                                            range3 = range + range2;
+                                            city = [];
 
-											for (var i in state_obj[state]){
-												city.push(state_obj[state][i].city);
-											}
+                                            for (var i in state_obj[state]){
+                                                city.push(state_obj[state][i].city);
+                                            }
 
-											var num = 350;
+                                            var num = 350;
                                             var num2 = 20;
-											
-											xScale = d3.scaleLinear().domain([0,10]).range([num2,num]);
+                                            
+                                            xScale = d3.scaleLinear().domain([0,10]).range([num2,num]);
 
-											yScale = d3.scaleLinear().domain([0,range3]).range([num,num2]);
-											heightScale = d3.scaleLinear().domain([0,range3]).range([num2, num]);
-											
-											yAxis_bar = d3.axisLeft().scale(yScale)
-													.tickSize(-500);
+                                            yScale = d3.scaleLinear().domain([0,range3]).range([num,num2]);
+                                            heightScale = d3.scaleLinear().domain([0,range3]).range([num2, num]);
+                                            
+                                            yAxis_bar = d3.axisLeft().scale(yScale)
+                                                    .tickSize(-500);
 
-											yax_g.transition()
-												.duration(1)
-												.call(yAxis_bar)
-												.attr("transform",`translate(${num2}, 0)`);
-												// .attr("transform", "translate(20, 0)");
-											
-											xAxis_bar = d3.axisBottom()
-												.scale(xScale)
-												.tickFormat(function(d, i) { 
-													// return city[i]; 
-													if (i!== 0) 
-														return city[i-1]; 
-													else return "";
-												})
-												.tickSize(-500);
-											
-												
-											bar_svg2.selectAll("g.xAxis").remove();
-											
-											var xax_g = bar_svg2.append("g")
-												.attr("class", "xAxis")
-												.call(xAxis_bar)
-												.attr("transform",`translate(0, ${num})`)
-												// .attr("transform", "translate(0, 480)")
-												.selectAll("text")
-												.style("text-anchor", "end")
-												.attr("dx", "-.8em")
-												.attr("dy", ".15em")
-												.attr("transform", "rotate(-65)" );
-												
-											barGroups2.selectAll("*").remove(); // clearing old bars
-											for (node in barGroups2._groups[0]) {
-												barGroups2._groups[0][node].parentNode.appendChild(barGroups2._groups[0][node]);
-											}
-											barGroups2.data(stackLayout(state_obj[state])).enter();
-																							
-											bars2 =	barGroups2.selectAll("rect") 
-															.data(function(d) { return d; })					
-															.enter()
-															.append("rect")
-															.transition()
-															.delay(function(d, i) {
+                                            yax_g.transition()
+                                                .duration(1)
+                                                .call(yAxis_bar)
+                                                .attr("transform",`translate(${num2}, 0)`);
+                                                // .attr("transform", "translate(20, 0)");
+                                            
+                                            xAxis_bar = d3.axisBottom()
+                                                .scale(xScale)
+                                                .tickFormat(function(d, i) { 
+                                                    // return city[i]; 
+                                                    if (i!== 0) 
+                                                        return city[i-1]; 
+                                                    else return "";
+                                                })
+                                                .tickSize(-500);
+                                            
+                                                
+                                            bar_svg2.selectAll("g.xAxis").remove();
+                                            
+                                            var xax_g = bar_svg2.append("g")
+                                                .attr("class", "xAxis")
+                                                .call(xAxis_bar)
+                                                .attr("transform",`translate(0, ${num})`)
+                                                // .attr("transform", "translate(0, 480)")
+                                                .selectAll("text")
+                                                .style("text-anchor", "end")
+                                                .attr("dx", "-.8em")
+                                                .attr("dy", ".15em")
+                                                .attr("transform", "rotate(-65)" );
+                                                
+                                            barGroups2.selectAll("*").remove(); // clearing old bars
+                                            for (node in barGroups2._groups[0]) {
+                                                barGroups2._groups[0][node].parentNode.appendChild(barGroups2._groups[0][node]);
+                                            }
+                                            barGroups2.data(stackLayout(state_obj[state])).enter();
+                                                                                            
+                                            bars2 = barGroups2.selectAll("rect") 
+                                                            .data(function(d) { return d; })                    
+                                                            .enter()
+                                                            .append("rect")
+                                                            .transition()
+                                                            .delay(function(d, i) {
                                                                 return i / 2*200;
                                                             })
-															.duration(1000)
-															.attr("width", 20)
-															.attr("height", p => heightScale(p[1]) - heightScale(p[0]))
-															.attr("x", (p, i) => xScale(i) + 25)
-															.attr("y", p => yScale(p[1]));
-											
-										}
-										else if (state_chart_name == "Police Violence Within State Black Population") {
-											state = d.abbr;
-											venn_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-											venn_div.selectAll("h1").text(d.name.toUpperCase());
-											venn_div.select("#venn_one").selectAll("*").remove();
-											var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
+                                                            .duration(1000)
+                                                            .attr("width", 20)
+                                                            .attr("height", p => heightScale(p[1]) - heightScale(p[0]))
+                                                            .attr("x", (p, i) => xScale(i) + 25)
+                                                            .attr("y", p => yScale(p[1]));
+                                            
+                                        }
+                                        else if (state_chart_name == "Police Violence Within State Black Population") {
+                                            state = d.abbr;
+                                            // venn_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+                                            venn_div.style("left", (event.pageX) + "px").style("top", (event.pageY/2) + "px");
+                                            venn_div.selectAll("h1").text(d.name.toUpperCase());
+                                            venn_div.select("#venn_one").selectAll("*").remove();
+                                            var b = data_obj_venn.filter(function(d) { return (d.state === state); })[0];
 
-											var black = parseInt(b.black.split(',').join("")) > 20000?  parseInt(b.black.split(',').join(""))/100: parseInt(b.black.split(',').join(""))/10; 
-											var sets = [
-														{sets: ["Black Population"], figure: black, label: "Black Population: " + b.black, size: black},
-														{sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
-														{sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
-														];
+                                            var black = parseInt(b.black.split(',').join("")) > 20000?  parseInt(b.black.split(',').join(""))/100: parseInt(b.black.split(',').join(""))/10; 
+                                            var sets = [
+                                                        {sets: ["Black Population"], figure: black, label: "Black Population: " + b.black, size: black},
+                                                        {sets: ["People Killed"], figure: parseInt(b.tkill.split(',').join("")), label: "People Killed by Police: " + b.tkill, size: b.tkill.split(',').join("")},
+                                                        {sets: ["Black Population", "People Killed"], figure: parseInt(b.bkill.split(',').join("")), label: "", size: parseInt(b.bkill.split(',').join(""))},
+                                                        ];
 
 
-											var chart = venn.VennDiagram()
-												.width(600)
-												.height(400);
+                                            var chart = venn.VennDiagram()
+                                                .width(600)
+                                                .height(400);
 
-											d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
-											var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
-											venn_div_inner.selectAll("text")
-													.style("fill", "black")
-													.style("font-size", "13px");
-											venn_div_inner.selectAll(".venn-circle path")
-													.style("fill-opacity", .8)
-													.style("stroke-width", 1)
-													.style("stroke-opacity", 1)
-													.style("stroke", "fff");
-														
+                                            d3.select("#venn_one").select("svg").attr("transform", "translate(-200, 0)");
+                                            var venn_div_inner = d3.select("#venn_one").datum(sets).call(chart);
+                                            venn_div_inner.selectAll("text")
+                                                    .style("fill", "black")
+                                                    .style("font-size", "13px");
+                                            venn_div_inner.selectAll(".venn-circle path")
+                                                    .style("fill-opacity", .8)
+                                                    .style("stroke-width", 1)
+                                                    .style("stroke-opacity", 1)
+                                                    .style("stroke", "fff");
+                                                        
 
-											var tooltip = d3.select("#venn_one").append("div")
-												.attr("class", "venntooltip");
+                                            var tooltip = d3.select("#venn_one").append("div")
+                                                .attr("class", "venntooltip");
 
-											
-											var x = venn.x_re_f()
-											var y = venn.y_re_f()
-										
-											// .attr("width", 400).attr("height", 400);
-											venn_div.select("svg").append('line')
-														.attr("x1", x)
-														.attr("x2", x)
-														.attr("y1", y)
-														.attr("y2", y-150)
-														.style("stroke", "black");
-											venn_div.select("svg").append('text')
-														// .attr("x1", x)
-														.attr("x", x-65)
-														// .attr("y1", y)
-														.attr("y", y-152)
-														.text("Black People Killed: " + b.bkill)
-														.attr("font-size", "15px")
-														.attr("fill", "black");
-										}
-									})
-									.on("mouseout", function(event, d) {
-										d3.select(event.currentTarget)
-												.transition()
-												.duration(300)
-												.style("fill", function(d) {
-													return stateScale(d.total);
-												})
-												.style("stroke", "#002760")
-												.style("stroke-width", "1px");
-									})
-									.on("mouseleave", function(event, d) {
-										d3.select(event.currentTarget)
-												.transition()
-												.duration(300)
-												.style("fill", function(d) {
-													return stateScale(d.total);
-												})
-												.style("stroke", "#002760")
-												.style("stroke-width", "1px");
-										if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 0); }
-										else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 0); }
-										else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 0); }
-									});
-								
-								// POLICE DEPARTMENT TOOLTIP
-								d3.json("../data/pd_coords.geojson")
-									.then(function(pdcoord) {
-										d3.csv("../data/killingsbypd.csv")
-											.then(function(pdcsv) {
-												var values = Array.from(pdcsv, x => ({ PD: x["PD"],
-																						data: [x["Black People Killed by Police (1/1/2013-12/31/2020)"],
-																						x["Hispanic People Killed by Police (1/1/2013-12/31/2020)"],
-																						x["Native American People Killed by Police (1/1/2013-12/31/2020)"],
-																						x["Asian People Killed by Police (1/1/2013-12/31/2020)"],
-																						x["Pacific Islanders Killed by Police (1/1/2013-12/31/2020)"],
-																						x["White People Killed by Police (1/1/2013-12/31/2020)"],
-																						x["Unknown Race People Killed by Police (1/1/2013-12/31/2020)"]]
-												}));
-												var numbers = pd_table.selectAll("text.val")
-																	.data(values[0].data)
-																	.enter()
-																	.append("text")
-																	.attr("class", "val")
-																	//.attr("id", "val")
-																	.attr("x", 225)
-																	.attr("y", function(d, i) {
-																		return 12.5 + (25*i);
-																	})
-																	.text(function(d, i) {
-																		return d;
-																	});
-																	
-												var pd_proj = d3.geoAlbers().scale([960]);
-												var gen = d3.geoPath().projection(pd_proj);
-												pds = svg.selectAll("path.pd")
-														.data(pdcoord.features)
-														.enter()
-														.append("path")
-														.attr("class", "pd")
-														.attr("d", gen)
-														.attr("d", gen.pointRadius(2.5))
-														.attr("transform", "translate(4, -25)")
-														.attr("stroke", "#fff")
-														.attr("stroke-width", 1.5)
-														.attr("fill", "#000")
-														.on("mouseover", function(event, d) {
-															pd_div.style("opacity", 1);
-															this.parentNode.appendChild(this);
-														})
-														.on("mousemove", function(event, d) {
-															var mouse_pos = d3.pointer(event, svg);
-															pd_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
-															var pd_hovered = pdcsv[pdcoord.features.indexOf(d)];
-															pd_div.selectAll("h1").text(pd_hovered["PD"].toUpperCase());
-															pd_div.selectAll("h2.uppertext").text("Instances of Fatal Police Violence: "+pd_hovered["All People Killed by Police (1/1/2013-12/31/2020)"]);
-															pd_div.selectAll("h2.bottomtext").text("Average Annual Police Killings (per 1,000,000)");
-															var pd_hovered_data = values.filter(function(d, i) { return d.PD == pd_hovered["PD"]; })[0];
-															numbers.data(pd_hovered_data.data)
-																	.transition(1)
-																	.text(function(d, i) {
-																		return d;
-																	});
-														})
-														.on("mouseleave", function(event, d) {
-															pd_div.style("opacity", 0);
-														});
-																												
-												
-											});
-									});
-									
-								// LEGEND
-									
-								var grad = svg.append("defs")
-											  .append("linearGradient")
-											  .attr("id", "grad")
-											  .selectAll("stop")
-											  .data(stateScale.ticks().map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: stateScale(t) })))
-											  .enter()
-											  .append("stop")
-											  .attr("offset", function(d) {
-													return d.offset;
-											  })
-											  .attr("stop-color", function(d) {
-													return d.color;
-											  });
-									  
-								var legend_txt = svg.append("text")
-														.attr("x", 15)
-														.attr("y", 75)
-														.attr("class", "state-legend")
-														.attr("dx", "1em")
-														.text("Police Killings")
-								var legend_txt_2 = svg.append("text")
-														.attr("x", 15)
-														.attr("y", 75)
-														.attr("class", "state-legend")
-														.attr("dy", "1.2em")
-														.text("as % of Population");
-									  
-								var state_legend = svg.append("g")
-													.attr("transform", "translate(70, 100), rotate(90)")
-													.append("rect")
-													.attr("width", 300)
-													.attr("height", 20)
-													.style("fill", "url(#grad)");
-								var percent_acc = d3.format(".3%");
-								var legend_axis = d3.axisLeft(stateScale_numerical).tickValues([0, 0.00001, 0.00002, 0.00003, 0.00004, 0.00005, 0.00006, 0.00007]).tickFormat(percent_acc);
-								var state_legend_axis = svg.append("g").call(legend_axis);
-								state_legend_axis.selectAll(".tick text")
-											.attr("transform", "translate(50, 100)")
-											.attr("color", "white");
-								state_legend_axis.selectAll(".tick line")
-											.attr("transform", "translate(70, 100)")
-											.attr("x2", -26);
-								state_legend_axis.selectAll(".domain")
-											.attr("transform", "translate(70, 100)");
-								});
-								
-								// ENABLING DROPDOWNS
-								
-								state_selector.property("disabled", false);
-								//pd_selector.property("disabled", false);
-					});
-			});
-		var states = svg.selectAll("path");
-	</script>
+                                            
+                                            var x = venn.x_re_f()
+                                            var y = venn.y_re_f()
+                                        
+                                            // .attr("width", 400).attr("height", 400);
+                                            venn_div.select("svg").append('line')
+                                                        .attr("x1", x)
+                                                        .attr("x2", x)
+                                                        .attr("y1", y)
+                                                        .attr("y2", y-150)
+                                                        .style("stroke", "black");
+                                            venn_div.select("svg").append('text')
+                                                        // .attr("x1", x)
+                                                        .attr("x", x-65)
+                                                        // .attr("y1", y)
+                                                        .attr("y", y-152)
+                                                        .text("Black People Killed: " + b.bkill)
+                                                        .attr("font-size", "15px")
+                                                        .attr("fill", "black");
+                                        }
+                                    })
+                                    .on("mouseout", function(event, d) {
+                                        d3.select(event.currentTarget)
+                                                .transition()
+                                                .duration(300)
+                                                .style("fill", function(d) {
+                                                    return stateScale(d.total);
+                                                })
+                                                .style("stroke", "#002760")
+                                                .style("stroke-width", "1px");
+                                    })
+                                    .on("mouseleave", function(event, d) {
+                                        d3.select(event.currentTarget)
+                                                .transition()
+                                                .duration(300)
+                                                .style("fill", function(d) {
+                                                    return stateScale(d.total);
+                                                })
+                                                .style("stroke", "#002760")
+                                                .style("stroke-width", "1px");
+                                        if (state_chart_name == "Races: Breakdown and Armed vs. Unarmed") { spider_div.style("opacity", 0); }
+                                        else if (state_chart_name == "City-Level Police Violence on Black People") { bar_div.style("opacity", 0); }
+                                        else if (state_chart_name == "Police Violence Within State Black Population") { venn_div.style("opacity", 0); }
+                                    });
+                                
+                                // POLICE DEPARTMENT TOOLTIP
+                                d3.json("../data/pd_coords.geojson")
+                                    .then(function(pdcoord) {
+                                        d3.csv("../data/killingsbypd.csv")
+                                            .then(function(pdcsv) {
+                                                var values = Array.from(pdcsv, x => ({ PD: x["PD"],
+                                                                                        data: [x["Black People Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["Hispanic People Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["Native American People Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["Asian People Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["Pacific Islanders Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["White People Killed by Police (1/1/2013-12/31/2020)"],
+                                                                                        x["Unknown Race People Killed by Police (1/1/2013-12/31/2020)"]]
+                                                }));
+                                                var numbers = pd_table.selectAll("text.val")
+                                                                    .data(values[0].data)
+                                                                    .enter()
+                                                                    .append("text")
+                                                                    .attr("class", "val")
+                                                                    //.attr("id", "val")
+                                                                    .attr("x", 225)
+                                                                    .attr("y", function(d, i) {
+                                                                        return 12.5 + (25*i);
+                                                                    })
+                                                                    .text(function(d, i) {
+                                                                        return d;
+                                                                    });
+                                                                    
+                                                var pd_proj = d3.geoAlbers().scale([960]);
+                                                var gen = d3.geoPath().projection(pd_proj);
+                                                pds = svg.selectAll("path.pd")
+                                                        .data(pdcoord.features)
+                                                        .enter()
+                                                        .append("path")
+                                                        .attr("class", "pd")
+                                                        .attr("d", gen)
+                                                        .attr("d", gen.pointRadius(2.5))
+                                                        .attr("transform", "translate(4, -25)")
+                                                        .attr("stroke", "#fff")
+                                                        .attr("stroke-width", 1.5)
+                                                        .attr("fill", "#000")
+                                                        .on("mouseover", function(event, d) {
+                                                            pd_div.style("opacity", 1);
+                                                            this.parentNode.appendChild(this);
+                                                        })
+                                                        .on("mousemove", function(event, d) {
+                                                            var mouse_pos = d3.pointer(event, svg);
+                                                            pd_div.style("left", mouse_pos[0]+"px").style("top", mouse_pos[1]+"px");
+                                                            var pd_hovered = pdcsv[pdcoord.features.indexOf(d)];
+                                                            pd_div.selectAll("h1").text(pd_hovered["PD"].toUpperCase());
+                                                            pd_div.selectAll("h2.uppertext").text("Instances of Fatal Police Violence: "+pd_hovered["All People Killed by Police (1/1/2013-12/31/2020)"]);
+                                                            pd_div.selectAll("h2.bottomtext").text("Average Annual Police Killings (per 1,000,000)");
+                                                            var pd_hovered_data = values.filter(function(d, i) { return d.PD == pd_hovered["PD"]; })[0];
+                                                            numbers.data(pd_hovered_data.data)
+                                                                    .transition(1)
+                                                                    .text(function(d, i) {
+                                                                        return d;
+                                                                    });
+                                                        })
+                                                        .on("mouseleave", function(event, d) {
+                                                            pd_div.style("opacity", 0);
+                                                        });
+                                                                                                                
+                                                
+                                            });
+                                    });
+                                    
+                                // LEGEND
+                                    
+                                var grad = svg.append("defs")
+                                              .append("linearGradient")
+                                              .attr("id", "grad")
+                                              .selectAll("stop")
+                                              .data(stateScale.ticks().map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: stateScale(t) })))
+                                              .enter()
+                                              .append("stop")
+                                              .attr("offset", function(d) {
+                                                    return d.offset;
+                                              })
+                                              .attr("stop-color", function(d) {
+                                                    return d.color;
+                                              });
+                                      
+                                var legend_txt = svg.append("text")
+                                                        .attr("x", 15)
+                                                        .attr("y", 75)
+                                                        .attr("class", "state-legend")
+                                                        .attr("dx", "1em")
+                                                        .text("Police Killings")
+                                var legend_txt_2 = svg.append("text")
+                                                        .attr("x", 15)
+                                                        .attr("y", 75)
+                                                        .attr("class", "state-legend")
+                                                        .attr("dy", "1.2em")
+                                                        .text("as % of Population");
+                                      
+                                var state_legend = svg.append("g")
+                                                    .attr("transform", "translate(70, 100), rotate(90)")
+                                                    .append("rect")
+                                                    .attr("width", 300)
+                                                    .attr("height", 20)
+                                                    .style("fill", "url(#grad)");
+                                var percent_acc = d3.format(".3%");
+                                var legend_axis = d3.axisLeft(stateScale_numerical).tickValues([0, 0.00001, 0.00002, 0.00003, 0.00004, 0.00005, 0.00006, 0.00007]).tickFormat(percent_acc);
+                                var state_legend_axis = svg.append("g").call(legend_axis);
+                                state_legend_axis.selectAll(".tick text")
+                                            .attr("transform", "translate(50, 100)")
+                                            .attr("color", "white");
+                                state_legend_axis.selectAll(".tick line")
+                                            .attr("transform", "translate(70, 100)")
+                                            .attr("x2", -26);
+                                state_legend_axis.selectAll(".domain")
+                                            .attr("transform", "translate(70, 100)");
+                                });
+                                
+                                // ENABLING DROPDOWNS
+                                
+                                state_selector.property("disabled", false);
+                                //pd_selector.property("disabled", false);
+                    });
+            });
+        var states = svg.selectAll("path");
+    </script>
 </body>
 
 </html>
