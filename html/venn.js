@@ -1,3 +1,5 @@
+//code copy from: https://github.com/benfred/venn.js/blob/master/venn.js
+//this file is for creating the venn diagram
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-selection'), require('d3-transition')) :
     typeof define === 'function' && define.amd ? define(['exports', 'd3-selection', 'd3-transition'], factory) :
